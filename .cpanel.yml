@@ -1,0 +1,6 @@
+---
+deployment:
+  tasks:
+    - /bin/mkdir -p /home/capnachi/public_html/taphuan
+    - /bin/cp index.html api.php course.php config.example.php sample-data.csv .htaccess /home/capnachi/public_html/taphuan/
+    - 'if [ ! -f /home/capnachi/public_html/taphuan/config.php ]; then /bin/cp config.example.php /home/capnachi/public_html/taphuan/config.php; fi'

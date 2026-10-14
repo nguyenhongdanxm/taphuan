@@ -1,4 +1,4 @@
-# Tập huấn AI — màn điều khiển và màn trình chiếu
+# Tập huấn AI — phiên bản 3, giao diện xanh sáng
 
 Báo cáo viên Nguyễn Hồng Dân. Trang dành cho chương trình tập huấn cán bộ quản lý trường phổ thông, 3 buổi / 18 phần, có nội dung tự tạo.
 
@@ -15,6 +15,12 @@ Trên hosting của trường:
 - https://noitruxinman.edu.vn/taphuan/
 
 ## Chức năng
+
+- Giao diện xanh sáng, thẻ thống kê, biểu tượng SVG và họa tiết tech/AI chìm; ba màn hình dùng chung phong cách.
+- Nút Chiếu cho từng ý nội dung, mô hình, nhiệm vụ, sản phẩm, công cụ, tình huống và câu lệnh; trình chiếu bản nháp AI.
+- Cài đặt AI dùng một khóa API Gemini hoặc OpenAI cho toàn bộ bảng điều khiển. Khóa mã hóa trên hosting; không đưa vào GitHub hay phản hồi học viên.
+- AI hỗ trợ soạn/chỉnh nội dung, lời dẫn maket, khảo sát, câu hỏi trò chơi, phân tích kết quả và tổ chức lớp. Bản nháp đưa vào biểu mẫu mới để duyệt rồi lưu.
+- Mọi khảo sát/trò chơi yêu cầu tài khoản kiểm diện; quản trị xem danh sách đã/chưa trả lời từ chính các tài khoản đó.
 
 - Maket: tải ảnh/video lên hosting, phủ kín hoặc hiện trọn màn hình; phát, dừng, phát lại và bật/tắt âm.
 - Kiểm diện bằng QR: bắt buộc họ tên, chức vụ, đơn vị, số điện thoại; lưu xong tự đăng nhập.
@@ -35,3 +41,7 @@ Trên hosting của trường:
 GitHub Pages không chạy API PHP; cần hosting PHP. Không đưa cấu hình riêng, mật khẩu, dữ liệu học viên hoặc tệp tải lên vào GitHub.
 
 Xem [HUONG-DAN.md](HUONG-DAN.md) để cài đặt và sử dụng. QR được tạo tại trình duyệt bằng qrcode-generator; không gọi dịch vụ QR bên ngoài. Thông tin giấy phép trong `assets/THIRD-PARTY.txt`.
+
+## Bật trợ lý AI
+
+Điều khiển → Cài đặt AI → chọn Gemini/OpenAI → dán khóa API → Lưu cài đặt → Kiểm tra kết nối. Model đã điền sẵn và có thể đổi theo quyền của khóa. Hosting cần PHP cURL, OpenSSL và kết nối HTTPS tới nhà cung cấp. Có thể dùng các chức năng tập huấn không có AI khi chưa nhập khóa. AI maket cung cấp lời dẫn/kịch bản/gợi ý hình ảnh; không tự sinh tệp ảnh hay video.

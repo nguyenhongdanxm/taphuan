@@ -25,9 +25,10 @@ function studio_summary($st,$is_admin) {
  // Chỉ công bố bảng điểm khi màn hiện tại cho phép công bố.
  $ranking=array_values($leader);usort($ranking,function($a,$b){return $b['score']-$a['score'];});
  if(!$is_admin&&(!$active||empty($active['reveal'])||$active['type']!=='game'))$ranking=array();
- $att=array();if($ss['stage']['kind']==='attendance'||$is_admin){foreach(array_slice($st['participants'],-12) as $p)$att[]=array('name'=>$p['name'],'role'=>$p['role'],'school'=>$p['school']);}
+ $att=array();if($ss['stage']['kind']==='attendance'||$is_admin){foreach(array_slice(array_filter($st['participants'],function($p){return !empty($p['phone']);}),-12) as $p)$att[]=array('name'=>$p['name'],'role'=>$p['role'],'school'=>$p['school']);}
  $pid=isset($_SESSION['participant'])?$_SESSION['participant']:null;$mine=array();foreach($ss['votes'] as $id=>$votes){if($pid&&isset($votes[$pid])){$v=$votes[$pid];if(!$is_admin&&empty($ss['items'][$id]['reveal']))unset($v['score']);$mine[$id]=$v;}}
- $stage=$ss['stage'];return array('items'=>$items,'active'=>$active,'stage'=>$stage,'stats'=>$stats,'ranking'=>array_slice($ranking,0,20),'attendance'=>$att,'mine'=>$mine,'assets'=>$is_admin?array_values($ss['assets']):array());
+ $roster=array();if($is_admin&&$active&&in_array($active['type'],array('poll','game'),true)){foreach($st['participants'] as $id=>$p){if(empty($p['phone']))continue;$roster[]=array('name'=>$p['name'],'role'=>$p['role'],'school'=>$p['school'],'answered'=>isset($ss['votes'][$active['id']][$id]));}}
+ $stage=$ss['stage'];return array('roster'=>$roster,'items'=>$items,'active'=>$active,'stage'=>$stage,'stats'=>$stats,'ranking'=>array_slice($ranking,0,20),'attendance'=>$att,'mine'=>$mine,'assets'=>$is_admin?array_values($ss['assets']):array());
 }
 function studio_actions($action,$input,$is_admin) {
  global $config;
@@ -66,7 +67,8 @@ function studio_actions($action,$input,$is_admin) {
  if($action==='studio_control') {
   need_admin();return with_state(function(&$st)use($input){$op=isset($input['op'])?$input['op']:'';$id=isset($input['id'])?$input['id']:'';
    if(in_array($op,array('welcome','attendance','blank'),true)){$st['studio']['stage']=array('kind'=>$op,'item'=>null,'page'=>'learn','slide'=>0,'media_version'=>time(),'playing'=>false,'sound'=>false);}
-   elseif($op==='show_course'){section($id);$st['controls']['open'][$id]=true;$st['controls']['focus']=$id;$page=isset($input['page'])?$input['page']:'learn';if(!in_array($page,array('learn','case','practice','prompt'),true))fail('Trang không hợp lệ.',400);$st['studio']['stage']=array('kind'=>'course','item'=>$id,'page'=>$page,'media_version'=>time(),'playing'=>false,'sound'=>false);}
+   elseif($op==='show_course'){section($id);$st['controls']['open'][$id]=true;$st['controls']['focus']=$id;$page=isset($input['page'])?$input['page']:'learn';$highlight=isset($input['highlight'])?max(-1,min(20,(int)$input['highlight'])):-1;if(!in_array($page,array('learn','case','practice','prompt'),true))fail('Trang không hợp lệ.',400);$st['studio']['stage']=array('kind'=>'course','item'=>$id,'page'=>$page,'highlight'=>$highlight,'media_version'=>time(),'playing'=>false,'sound'=>false);}
+   elseif($op==='message'){$st['studio']['stage']=array('kind'=>'message','item'=>null,'title'=>cut(isset($input['title'])?$input['title']:'',160),'body'=>cut(isset($input['body'])?$input['body']:'',16000),'page'=>'learn','media_version'=>time(),'playing'=>false,'sound'=>false);}
    elseif($op==='show'){$item=studio_item($st,$id);$st['studio']['items'][$id]['open']=true;$st['studio']['stage']=array('kind'=>'item','item'=>$id,'page'=>'learn','slide'=>0,'media_version'=>time(),'playing'=>true,'sound'=>false);}
    elseif(in_array($op,array('accept','reveal','hide','start','stop'),true)){$item=studio_item($st,$id);if($op==='hide'){$st['studio']['items'][$id]['open']=false;$st['studio']['items'][$id]['accept']=false;if($st['studio']['stage']['item']===$id)$st['studio']['stage']['kind']='welcome';}
     elseif($op==='start'){if($item['type']!=='game')fail('Chỉ trò chơi có nút bắt đầu tính giờ.',400);if(empty($item['open']))fail('Đưa câu hỏi lên màn chiếu trước.',409);$st['studio']['items'][$id]['accept']=true;$st['studio']['items'][$id]['reveal']=false;$st['studio']['items'][$id]['deadline']=time()+$item['seconds'];}

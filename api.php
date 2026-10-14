@@ -10,6 +10,7 @@ $config = require __DIR__ . '/config.php';
 if (!is_array($config) || empty($config['setup_key']) || strlen($config['setup_key']) < 24 || strpos($config['setup_key'], 'THAY_BANG_') === 0) { fail('Đặt setup_key riêng ít nhất 24 ký tự trong config.php trước khi khởi tạo.', 503); }
 $course = require __DIR__ . '/course.php';
 require_once __DIR__ . '/studio.php';
+require_once __DIR__ . '/ai.php';
 $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 ini_set('session.use_strict_mode', '1');
 session_name('AIWORKSHOP');
@@ -66,7 +67,8 @@ try {
   }
  } elseif ($action!=='state' && $action!=='admin_data') { fail('Thao tác này cần POST.',405); }
  $is_admin=admin();
- if(in_array($action,array('student_register','student_login','student_logout','studio_save','studio_control','studio_vote','upload'),true)) { $result=studio_actions($action,$input,$is_admin);
+ if(in_array($action,array('ai_settings','ai_save','ai_generate'),true)) { $result=ai_actions($action,$input);
+ } elseif(in_array($action,array('student_register','student_login','student_logout','studio_save','studio_control','studio_vote','upload'),true)) { $result=studio_actions($action,$input,$is_admin);
  } elseif ($action==='state') {
   $result=with_state(function(&$st) use($course,$is_admin) {
    $outline=array(); $visible=array();
@@ -82,7 +84,8 @@ try {
    $gallery=array();
    foreach($st['controls']['featured'] as $key=>$yes) { if ($yes) { $pair=explode('|',$key); if(count($pair)===2 && isset($st['responses'][$pair[0]][$pair[1]])) { $r=$st['responses'][$pair[0]][$pair[1]]; if(!empty($r['share'])) { $p=$st['participants'][$pair[1]]; $gallery[]=array('section'=>$pair[0],'name'=>$p['name'],'school'=>$p['school'],'submission'=>$r['submission'],'link'=>$r['link']); } } } }
    $public_controls=$st['controls']; if(!$is_admin) unset($public_controls['featured']);
-   return array('studio'=>studio_summary($st,$is_admin),'server_time'=>time(),'title'=>$course['title'],'presenter'=>$course['presenter'],'sessions'=>$course['sessions'],'tools'=>$course['tools'],'outline'=>$outline,'sections'=>$visible,'controls'=>$public_controls,'stats'=>$stats,'gallery'=>$gallery,'me'=>$me,'mine'=>$mine,'participant_count'=>count($st['participants']),'version'=>$st['version'],'admin'=>$is_admin,'initialized'=>!empty($st['password_hash']),'csrf'=>$_SESSION['csrf']);
+   $checked=0;foreach($st['participants'] as $person)if(!empty($person['phone']))$checked++;
+   return array('checked_in_count'=>$checked,'ai'=>$is_admin?ai_meta():null,'studio'=>studio_summary($st,$is_admin),'server_time'=>time(),'title'=>$course['title'],'presenter'=>$course['presenter'],'sessions'=>$course['sessions'],'tools'=>$course['tools'],'outline'=>$outline,'sections'=>$visible,'controls'=>$public_controls,'stats'=>$stats,'gallery'=>$gallery,'me'=>$me,'mine'=>$mine,'participant_count'=>count($st['participants']),'version'=>$st['version'],'admin'=>$is_admin,'initialized'=>!empty($st['password_hash']),'csrf'=>$_SESSION['csrf']);
   },false);
  } elseif($action==='login' || $action==='setup') {
   $result=with_state(function(&$st) use($action,$input,$config) {
@@ -144,7 +147,7 @@ try {
   if($link!=='' && (!filter_var($link,FILTER_VALIDATE_URL)||!in_array(strtolower(parse_url($link,PHP_URL_SCHEME)),array('http','https'),true))) fail('Liên kết cần bắt đầu bằng http:// hoặc https://.',400);
   $result=with_state(function(&$st) use($id,$choice,$submission,$link,$input) {
    $pid=isset($_SESSION['participant'])?$_SESSION['participant']:'';
-   if(!isset($st['participants'][$pid])) fail('Đăng ký vào lớp trước khi gửi.',401);
+   if(!isset($st['participants'][$pid])||empty($st['participants'][$pid]['phone'])) fail('Hoàn thành kiểm diện hoặc đăng nhập bằng số điện thoại trước khi gửi.',401);
    if(empty($st['controls']['open'][$id])||empty($st['controls']['accept'][$id])) fail('Phần này chưa mở nhận phản hồi hoặc đã đóng.',409);
    if(empty($st['responses'][$id]))$st['responses'][$id]=array();
    $st['responses'][$id][$pid]=array('choice'=>$choice,'submission'=>$submission,'link'=>$link,'share'=>!empty($input['share']),'time'=>gmdate('c'));

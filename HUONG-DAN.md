@@ -1,110 +1,93 @@
-# Trang tập huấn công nghệ số và AI — 3 buổi
+# Hướng dẫn vận hành tập huấn AI — bản hai màn hình
 
-Báo cáo viên: Thầy giáo Nguyễn Hồng Dân.
+## 1. Các địa chỉ
 
-## 1. Các tệp
+**Báo cáo viên:** https://noitruxinman.edu.vn/taphuan/control.html
+**Máy chiếu:** https://noitruxinman.edu.vn/taphuan/screen.html
+**Học viên:** https://noitruxinman.edu.vn/taphuan/
 
-- index.html: giao diện học viên và bảng điều khiển quản trị, có CSS/JavaScript bên trong, không tải thư viện ngoài.
-- api.php: đồng bộ nội dung mở/ẩn, đăng ký, khảo sát và bài thực hành.
-- course.php: toàn bộ nội dung 3 buổi / 18 phần. API chỉ gửi các phần đã mở tới học viên.
-- config.example.php: cấu hình mẫu; sao chép thành config.php và đặt mã khởi tạo riêng trên hosting. config.php không được lưu lên GitHub.
-- .htaccess: hạn chế truy cập trực tiếp vào tệp cấu hình/nội dung trên Apache.
-- sample-data.csv: dữ liệu giả lập; giao diện cũng tự tạo bản CSV tương đương để tải.
-- HUONG-DAN.md: tài liệu này; giữ trên máy, không cần đưa lên hosting.
+Có thể mở màn chiếu trên thiết bị khác, hoặc kéo tab trình chiếu sang màn hình ngoài khi máy tính đang dùng chế độ mở rộng màn hình. Trên màn chiếu bấm Toàn màn hình. Màn điều khiển chỉ có tác dụng sau khi đăng nhập quản trị; màn chiếu không hiển thị bảng điều khiển hay số điện thoại học viên.
 
-HTML tĩnh riêng lẻ không đồng bộ quyền mở nội dung trên nhiều thiết bị. Vì vậy cần đặt index.html cùng các tệp PHP trên hosting. Mở HTML trực tiếp trên máy sẽ chỉ thấy khung và thông báo chưa kết nối.
+## 2. Cập nhật từ GitHub
 
-## 2. Yêu cầu hosting
+cPanel → Git Version Control → Manage → Pull or Deploy → Update from Remote → Deploy HEAD Commit.
 
-PHP có OpenSSL, session, JSON, password_hash, hash_equals; mã sử dụng cú pháp PHP 5.6 trở lên. Ưu tiên hosting PHP được nhà cung cấp duy trì. Không cần MySQL hoặc API key AI. Trang chỉ giới thiệu/cung cấp câu lệnh và liên kết công cụ; không gọi AI thay học viên.
+Đường dẫn triển khai: /home/capnachi/noitruxinman.edu.vn/taphuan/.
 
-Trình duyệt hiện đại trên điện thoại/máy tính; bật JavaScript và cookie. Clipboard hoạt động thuận tiện với HTTPS, có phương án sao chép thủ công nếu không được phép.
+Gói sao chép index.html, control.html, screen.html, api.php, studio.php, course.php, config.example.php, sample-data.csv, .htaccess và assets/. Giữ nguyên config.php, workshop-data/ và workshop-media/. Cấu hình mẫu chỉ được sao chép thành config.php nếu chưa có tệp đó. Không đổi Document Root hay sửa hệ thống CDS.
 
-Dữ liệu mặc định lưu tại workshop-data, tự tạo khi API chạy. PHP phải có quyền ghi thư mục này. Không cấp quyền 777 tùy tiện; dùng quyền phù hợp tài khoản hosting. Có thể sửa data_dir trong config.php thành đường dẫn tuyệt đối ngoài public_html để tách dữ liệu khỏi thư mục web. Tệp dữ liệu có tiền tố PHP exit và thư mục được tạo .htaccess chặn truy cập; Nginx không đọc .htaccess nên ưu tiên đặt data_dir ngoài thư mục web hoặc cấu hình chặn thư mục dữ liệu.
+Sau khi deploy, tải lại cả màn điều khiển/màn chiếu/học viên để nhận giao diện mới. Không chỉnh tệp trong bản checkout Git ở cPanel, để Update from Remote tiếp tục hoạt động.
 
-Thiết kế cho một khóa quy mô nhỏ/vừa, mặc định tối đa 200 đăng ký theo cấu hình. Đây là giới hạn đăng ký, không phải cam kết 200 người truy cập đồng thời. Dữ liệu tệp dùng khóa và ghi thay thế; với nhiều khóa hoặc lưu lượng lớn nên chuyển API sang cơ sở dữ liệu. Không liên kết hoặc thay đổi hệ thống CDS đang vận hành.
+## 3. Cài đặt lần đầu
 
-## 3. Cài đặt
+PHP có session, JSON, OpenSSL (hoặc random_bytes), password_hash, hash_equals, fileinfo; hỗ trợ cú pháp PHP 5.6 trở lên. DOCX cần ZipArchive. Không cần khóa API AI. JavaScript cần trình duyệt hiện đại.
 
-1. Tạo thư mục mới, ví dụ public_html/taphuan-ai/; không ghi đè tệp của hệ thống hiện tại.
-2. Tải lên index.html, api.php, course.php, config.example.php và .htaccess. Sao chép config.example.php thành config.php trên hosting, thay setup_key bằng chuỗi ngẫu nhiên riêng ít nhất 24 ký tự (ưu tiên 48 ký tự hex). Không dùng nguyên giá trị mẫu, không commit config.php. sample-data.csv là tùy chọn.
-3. Truy cập https://ten-mien-cua-thay/taphuan-ai/index.html.
-4. Nếu hiện lỗi API: mở /taphuan-ai/api.php?action=state để xem thông báo JSON; kiểm tra PHP, quyền ghi và nhật ký lỗi hosting. Đừng công khai nội dung config.php hoặc mật khẩu để nhờ hỗ trợ.
-5. Nếu Apache báo 500 vì không cho phép Options/FilesMatch, nhờ nhà cung cấp điều chỉnh hoặc bỏ dòng Options -Indexes; giữ biện pháp bảo vệ cấu hình. Nếu máy chủ không xử lý PHP thì không triển khai gói này lên đó.
+Sao chép config.example.php thành config.php trên hosting, đặt setup_key riêng ít nhất 24 ký tự. Mở control.html, nhập mã khởi tạo và đặt mật khẩu quản trị ít nhất 12 ký tự. Sau này chỉ đăng nhập bằng mật khẩu quản trị; mật khẩu đã tạo trước nâng cấp được giữ nguyên.
 
-## 4. Khởi tạo quản trị
+PHP cần quyền ghi workshop-data/ và workshop-media/. Có thể đặt data_dir ngoài thư mục web để bảo quản dữ liệu. Không cấp quyền 777 tùy tiện. Mặc định tối đa 200 đăng ký, thiết kế cho một khóa nhỏ/vừa; không phải cam kết tải 200 người đồng thời. Nếu dùng nhiều khóa/lưu lượng lớn, cần chuyển dữ liệu sang cơ sở dữ liệu và kiểm tra tải trên hosting.
 
-1. Trong trình quản lý tệp hosting, mở config.php và lấy giá trị setup_key. Giá trị do thầy đặt riêng trên hosting; không nằm trong HTML hoặc repository.
-2. Trên trang chọn ⚙ Quản trị lớp học.
-3. Nhập mã khởi tạo và đặt mật khẩu ít nhất 12 ký tự; không có mật khẩu mặc định.
-4. Sau khi khởi tạo, mã không thể tạo lại quản trị. Những lần sau chỉ đăng nhập bằng mật khẩu.
-5. Đổi mật khẩu trong bảng điều khiển khi cần. Nếu quên, không xóa dữ liệu; khôi phục bằng phương án quản trị hosting phù hợp sau khi sao lưu.
-6. Phiên quản trị hết hạn sau 8 giờ không hoạt động; đăng xuất sau buổi học.
+Nếu API bị NukeViet chặn GET /api.php, áp dụng ngoại lệ chính xác /taphuan/api.php như hướng dẫn đã thực hiện trên .htaccess website chính. .htaccess ứng dụng dùng DirectoryIndex index.html và RewriteEngine Off để tách quy tắc rewrite tại thư mục ứng dụng. Không xóa quy tắc bảo vệ toàn website.
 
-Giới hạn đăng nhập/khởi tạo sai: 8 lần trong 15 phút theo địa chỉ IP. IP được băm trong dữ liệu giới hạn thử, không đưa vào báo cáo lớp học. Cookie quản trị sử dụng HttpOnly; bật Secure khi PHP nhận HTTPS. Nếu dùng reverse proxy, đảm bảo cấu hình HTTPS tới PHP chính xác.
+## 4. Kiểm diện và tài khoản
 
-## 5. Điều hành lớp học
+Điều khiển → Kiểm diện → Chiếu mã QR.
 
-- Mặc định mọi phần đều khóa với học viên. Quản trị có thể xem toàn bộ để chuẩn bị.
-- Hiện nội dung: mở một phần hoặc cả buổi.
-- Nhận lựa chọn & bài nộp: bật riêng sau khi đã mở phần. Mở nội dung không tự mở nhận bài.
-- Công bố kết quả & gợi ý: bật khi muốn cho lớp xem phân bố lựa chọn và gợi ý xử lý. Đáp án không được gửi tới học viên trước đó.
-- Đưa lên màn hình: chọn phần đang trình bày. Học viên bật “Theo nhịp báo cáo viên” sẽ chuyển theo; có thể tắt để tự xem phần đã mở.
-- Trình chiếu: ẩn thanh bên, tăng cỡ chữ; mũi tên trái/phải chuyển phần. Đây là chế độ bố cục trình bày, không tự ép trình duyệt toàn màn hình.
-- Đồng hồ: nhập phút, bắt đầu/dừng; mọi thiết bị nhận cùng mốc kết thúc. Đồng hồ không tự đóng bài, quản trị chủ động tắt nhận bài.
-- Thông báo: gửi chỉ dẫn cho lớp.
-- Học viên cập nhật trạng thái trong khoảng 5 giây khi trang đang mở. Chuyển lại tab sẽ tải trạng thái mới.
-- Đóng một phần sẽ tắt nhận bài và công bố kết quả của phần đó. Nội dung đã đọc không thể thu hồi khỏi trí nhớ, ảnh chụp hoặc bản đã lưu của người dùng.
+QR chứa địa chỉ trang học viên có checkin=1. Tạo QR ngay trên trình duyệt, không gửi thông tin tới dịch vụ QR bên ngoài. Học viên nhập đủ họ tên, chức vụ, đơn vị, số điện thoại. Điện thoại chuẩn hóa 10 chữ số bắt đầu 0; +84 được đổi sang 0. Lưu xong tạo tài khoản và tự đăng nhập.
 
-Link học viên chính là link index.html. Sao chép trong bảng điều khiển rồi gửi theo kênh của thầy. Không có yêu cầu tạo tài khoản hệ thống cho học viên; đăng ký tên hiển thị/đơn vị để gửi phản hồi. Ai có link đều có thể đọc phần đã mở. Nếu cần giới hạn người xem, cần thêm lớp xác thực riêng trên hosting.
+Quy tắc mật khẩu ban đầu: lấy từ cuối của họ tên, bỏ dấu tiếng Việt, viết thường, nối 3 số cuối điện thoại. Nguyễn Hồng Dân + 0888770799 → dan799. Nếu nhập 0888770699 thì mật khẩu là dan699. Tên và số điện thoại được lấy từ biểu mẫu, không tự sửa theo ví dụ.
 
-## 6. Khảo sát, bài thực hành và sản phẩm
+Học viên thấy tài khoản/mật khẩu của chính mình sau đăng ký; ghi lại để dùng trên thiết bị khác. Số điện thoại đã có không tạo lại; dùng Đã có tài khoản để đăng nhập. Quản trị có thể đặt lại mật khẩu về quy tắc ban đầu trong danh sách học viên.
 
-- Học viên chọn “Vào lớp”, nhập tên hiển thị/đơn vị/vai trò và xác nhận lưu thông tin.
-- Chọn phương án trong Tình huống & khảo sát. Phần đầu là khảo sát nhu cầu, không có đáp án đúng/sai.
-- Soạn bài trong Thực hành; có thể thêm liên kết http/https. Trang không nhận tải tệp trực tiếp.
-- Lựa chọn tình huống và bài thực hành gửi cùng một bản ghi. Một người/một phần có một bản ghi hiện tại; gửi lại cập nhật bản ghi, không tạo thêm lượt.
-- Bản nháp lưu cục bộ trên trình duyệt. Lưu tập trung chỉ xảy ra khi gửi thành công. Khi quản trị đóng nhận bài, vẫn soạn nháp được nhưng không gửi được.
-- Không nhập dữ liệu thật nhạy cảm, mật khẩu hoặc đường dẫn có token bí mật.
-- Chỉ bài được học viên đồng ý chia sẻ mới có thể được quản trị chọn đưa lên thư viện chung. Gửi lại bài tự bỏ trạng thái được chọn để quản trị rà soát lại.
-- Xuất CSV gồm đăng ký và phản hồi hiện tại, UTF-8 BOM; ô có nguy cơ bị bảng tính hiểu thành công thức được trung hòa. CSV là bảng dữ liệu, không phải Excel có định dạng màu.
+Danh sách tên/chức vụ/đơn vị và số lượng có thể chiếu trong màn kiểm diện. Số điện thoại chỉ hiện với chính chủ tài khoản và quản trị; bảng điểm trò chơi không có số điện thoại. Không chia sẻ CSV danh sách ra ngoài phạm vi khóa học.
 
-## 7. Nội dung và lịch học
+Học viên từ bản cũ chưa có điện thoại được yêu cầu hoàn thành kiểm diện; nếu còn phiên cũ, hồ sơ được bổ sung tại cùng mã học viên để giữ phản hồi trước đó. Không tự ghép người chỉ dựa trên tên giống nhau.
 
-Mỗi buổi 180 phút dự kiến, có thể điều chỉnh trong course.php. Không có nghỉ giải lao cố định; báo cáo viên chủ động bố trí trong hoạt động.
+## 5. Maket ảnh/video
 
-Buổi 1: khảo sát vướng mắc; hiểu phần mềm/tự động hóa/AI; phân công trách nhiệm; vận hành dữ liệu/sự cố; mô hình ứng dụng; lựa chọn sản phẩm và kế hoạch 30 ngày.
-Buổi 2: giao nhiệm vụ AI; văn bản/kế hoạch; họp/giao việc; quản lý chuyên môn; phân tích dữ liệu; ra quyết định.
-Buổi 3: tài khoản/thao tác nền; nội dung truyền thông; thiết kế slide/infographic; hỏi–đáp trên nguồn; đa phương tiện; xưởng sản phẩm.
+Điều khiển → Maket → Tạo nội dung.
 
-Mỗi phần có: nội dung, mô hình, tình huống, lựa chọn, giải thích, nhiệm vụ, sản phẩm, tiêu chí, câu lệnh, công cụ. Gợi ý dẫn lớp chỉ gửi tới quản trị.
+Nhập tiêu đề, chọn ảnh/video → Tải tệp lên hosting → chọn tư liệu → Lưu nội dung → Trình chiếu.
 
-Các công cụ mở ở tab riêng, không nhúng tài khoản và không gọi API AI. Tính năng/gói tài khoản có thể khác nhau; kiểm tra trước buổi học. Ưu tiên một AI chủ lực, các công cụ còn lại là lựa chọn. Giới thiệu CDS trên dữ liệu thử đã kiểm tra, không dùng lớp đang vận hành để thao tác thử.
+Định dạng: JPG, JPEG, PNG, WEBP, GIF, MP4, WEBM. Chọn Phủ kín màn hình nếu muốn lấp đầy; chọn Hiện trọn nếu cần giữ toàn bộ ảnh/video, có thể có viền đen. Tiêu đề dùng để quản lý, không đè lên maket.
 
-Tài liệu chỉ đạo và ghi chép họp đi kèm là GIẢ LẬP; không có số hiệu pháp lý, không dùng làm căn cứ ban hành. Nếu bổ sung chủ trương/quy định thật, kiểm tra nguồn chính thức, ngày, hiệu lực và phạm vi áp dụng trước tập huấn.
+Điều khiển nhanh có phát/tạm dừng, phát lại, bật/tắt âm. Khi mới mở màn chiếu, trình duyệt có thể yêu cầu tương tác trực tiếp để phát video/âm thanh: bấm Bật âm thanh / video trên màn chiếu một lần. Đây là giới hạn trình duyệt, không thể bỏ bằng lệnh từ thiết bị khác. Chân trang nhỏ vẫn hiển thị theo yêu cầu.
 
-## 8. Sao lưu và bảo trì
+Tệp tối đa 50 MB trong ứng dụng; hosting có thể đặt upload_max_filesize/post_max_size thấp hơn. Nếu tải không được, kiểm tra giới hạn PHP. Tên tệp trên hosting được tạo ngẫu nhiên; loại tệp được kiểm tra. Không nhận PHP, HTML hoặc SVG tải lên.
 
-Sao lưu cả mã nguồn và thư mục dữ liệu sau mỗi buổi; chứa mật khẩu băm và phản hồi nên không phát cho học viên. previous.php là một bản trước lần ghi gần nhất, không thay thế lịch sử sao lưu của hosting. Khi phục hồi, dừng ghi, sao lưu hiện trạng rồi thay đúng tệp dữ liệu và kiểm tra trên bản thử. Không sửa trực tiếp JSON đang được dùng.
+## 6. Tự tạo nội dung tập huấn
 
-Để mở khóa mới độc lập, tạo thư mục triển khai mới với data_dir riêng và setup_key mới. Mẫu này quản lý một khóa; không có tính năng tự xóa toàn bộ bài trong giao diện.
+Chọn Nội dung văn bản hoặc Tài liệu & hình ảnh trong biểu mẫu tạo nội dung. Dán nội dung chữ vào ô, tải tư liệu nếu cần. Dùng một dòng riêng chỉ chứa --- để chia văn bản thành các trang. Sau Trình chiếu, Trang trước/Trang tiếp đổi trang từ màn điều khiển.
 
-## 9. Kiểm tra trước buổi học
+PDF được nhúng để xem trực tiếp; Trang trước/Trang tiếp đổi trang PDF. Hành vi trình xem PDF phụ thuộc trình duyệt; kiểm tra máy chiếu trước buổi học. TXT mở ở tab khác, hoặc dán nội dung vào biểu mẫu để chiếu. DOCX được tải để xem bằng Word; muốn chiếu nhiều trang trực tiếp, xuất Word thành PDF trước. Không có chuyển đổi DOCX sang PDF trên máy chủ.
 
-Dùng trình duyệt quản trị và một trình duyệt riêng/ẩn danh làm học viên:
-1. Trước mở: học viên chỉ thấy tiêu đề phần, không thấy nội dung/câu lệnh.
-2. Quản trị mở một phần: học viên thấy trong khoảng 5 giây.
-3. Chưa nhận bài: gửi bị chặn; mở nhận bài: học viên đăng ký và gửi được.
-4. Chưa công bố: học viên không thấy gợi ý/biểu đồ; công bố: thấy đúng kết quả.
-5. Chọn phần đang trình bày và thử theo nhịp/tắt theo nhịp.
-6. Thử đồng hồ, thông báo, gửi lại bài, xuất CSV.
-7. Thử công khai bài có đồng ý; bài không đồng ý không được chọn.
-8. Đăng xuất quản trị; gọi chức năng điều khiển phải bị từ chối.
-9. Kiểm tra điện thoại, máy chiếu, mạng và việc mở liên kết sản phẩm.
-10. Mở /config.php, /course.php và /workshop-data/state.php trực tiếp: không được hiện mã, nội dung hoặc dữ liệu lớp.
+18 phần nội dung gốc vẫn ở mục Nội dung tập huấn. Chọn buổi, Xem, rồi Chiếu. Chọn Nội dung / Tình huống / Thực hành / Câu lệnh để đưa đúng trang lên màn chiếu. Mở nhận bài và công bố gợi ý riêng cho từng phần; bài cũ được giữ.
 
-## 10. Phạm vi kiểm tra của bản bàn giao
+Có thể sửa nội dung tự tạo chưa nhận phản hồi. Khi đã có phản hồi, dùng Nhân bản để tạo phiên bản mới; không sửa câu hỏi/đáp án rồi thay đổi điểm đã nhận. Ẩn chỉ đóng hiển thị/nhận, không xóa dữ liệu. Giới hạn 100 nội dung tự tạo cho một khóa.
 
-Đã kiểm tra cú pháp JavaScript và chạy kiểm tra logic giao diện: khóa/mở, nhận phản hồi, công bố, mã hóa nội dung khi hiển thị, liên kết an toàn, xuất CSV và cấu trúc 18 phần. Cập nhật trạng thái, xác thực và lưu tập trung được triển khai trong API PHP.
+## 7. Khảo sát
 
-Đã kiểm tra cú pháp PHP 5.6 bằng parser và chạy kiểm tra chức năng API trong PHP 8.2 WebAssembly: khởi tạo/đăng nhập, CSRF, quyền quản trị, khóa nội dung/đáp án, đăng ký, gửi/cập nhật bài, tổng hợp, đồng ý chia sẻ, đóng phần học, trình bày, đồng hồ, thông báo, đổi mật khẩu, đăng xuất và tệp dữ liệu không phát nội dung trực tiếp. Chưa chạy trên PHP native của hosting hoặc kiểm tra trực quan bằng trình duyệt trên hosting; cần thử quyền ghi, session và hai trình duyệt sau khi tải lên.
+Tạo loại Khảo sát; nhập câu hỏi, lời dẫn, 2–6 phương án (mỗi dòng một phương án). Trình chiếu → Mở nhận khảo sát. Học viên đã kiểm diện gửi lựa chọn trên trang của mình. Mỗi tài khoản có một lựa chọn hiện tại và có thể cập nhật khi còn nhận.
+
+Quản trị xem phân bố trước khi công bố; học viên/màn chiếu chỉ thấy biểu đồ khi Công bố kết quả. Công bố tự đóng nhận trả lời. Các phương án không có đúng/sai. Đóng nhận có thể dùng riêng mà chưa công bố.
+
+## 8. Trò chơi
+
+Tạo loại Trò chơi, 2–6 phương án, chọn đáp án A–F tương ứng thứ tự, thời gian 10–300 giây, giải thích. Trình chiếu → Bắt đầu → học viên trả lời → Công bố kết quả.
+
+Mỗi tài khoản trả lời một lần mỗi câu. Máy chủ kiểm tra hạn; không nhận khi chưa bắt đầu, hết giờ, đóng nhận hoặc đã công bố. Trả lời đúng được 100 điểm, sai 0 điểm, không chấm theo tốc độ. Điểm cộng qua các câu trò chơi đã tạo, bảng điểm xuất hiện khi công bố một câu trò chơi. Người cùng điểm không có ưu tiên thắng dựa trên tốc độ. Muốn chơi lại câu đã trả lời, Nhân bản thành câu mới.
+
+Đáp án/giải thích/điểm cá nhân không được gửi cho học viên trước công bố. Đồng hồ hiển thị dựa trên giờ máy chủ; công bố kết quả do báo cáo viên chủ động.
+
+## 9. Dữ liệu và bàn giao
+
+Nâng cấp bổ sung studio vào dữ liệu cũ, giữ mật khẩu quản trị, hồ sơ và phản hồi cũ. Tệp tải lên lưu workshop-media/; metadata, nội dung, khảo sát, điểm, hồ sơ lưu workshop-data/. Không xóa hai thư mục khi deploy. Có một bản dự phòng trước lần ghi gần nhất; cần sao lưu hosting sau từng buổi để có lịch sử đầy đủ.
+
+Tư liệu tải lên được phục vụ theo URL ngẫu nhiên; ai có URL tư liệu có thể mở. Không dùng hệ thống này để cất giữ tài liệu mật. Ai có link học viên có thể xem nội dung đã mở; không có OTP xác minh số điện thoại hoặc xác thực danh tính độc lập.
+
+API không trả mật khẩu băm trong hồ sơ công khai hay danh sách quản trị. Mật khẩu đăng ký/đặt lại chỉ hiện trong phản hồi cho người đăng ký hoặc quản trị. Tài khoản AI của bên thứ ba không được lưu trong ứng dụng.
+
+## 10. Kiểm tra trước khi tập huấn
+
+Mở control.html, screen.html và index.html ở các trình duyệt/thiết bị riêng. Thử QR kiểm diện, đủ bốn trường, số trùng, đăng nhập lại, ảnh/video, phát/tạm dừng, âm thanh, PDF đổi trang, chữ chia trang, khảo sát nhận/công bố, trò chơi hết giờ, điểm và dữ liệu cũ.
+
+Môi trường kiểm tra mã nguồn: cú pháp PHP 5.6; API chạy trong PHP 8.2 WebAssembly; logic giao diện và QR chạy trong Node. Chưa kiểm tra trực quan trên hosting thật; cần thử giới hạn upload, quyền ghi, âm thanh và trình xem PDF trên thiết bị trình chiếu của thầy sau triển khai.

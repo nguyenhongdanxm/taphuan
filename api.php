@@ -9,6 +9,7 @@ if (!is_file(__DIR__ . '/config.php')) { fail('Chưa cấu hình hosting: sao ch
 $config = require __DIR__ . '/config.php';
 if (!is_array($config) || empty($config['setup_key']) || strlen($config['setup_key']) < 24 || strpos($config['setup_key'], 'THAY_BANG_') === 0) { fail('Đặt setup_key riêng ít nhất 24 ký tự trong config.php trước khi khởi tạo.', 503); }
 $course = require __DIR__ . '/course.php';
+require_once __DIR__ . '/studio.php';
 $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 ini_set('session.use_strict_mode', '1');
 session_name('AIWORKSHOP');
@@ -34,6 +35,7 @@ function with_state($callback, $write) {
    $raw=file_get_contents($path); if (substr($raw,0,strlen($prefix))!==$prefix) { throw new Exception('Dữ liệu có định dạng không hợp lệ.'); }
    $state=json_decode(substr($raw,strlen($prefix)),true); if (!is_array($state) || !isset($state['controls'])) { throw new Exception('Dữ liệu lỗi; cần kiểm tra bản sao lưu.'); }
   } else { $raw=null; $state=initial_state(); }
+  studio_defaults($state);
   $result=call_user_func_array($callback,array(&$state));
   if ($write) {
    $state['version']++;
@@ -56,13 +58,16 @@ try {
  $action=isset($_GET['action'])?$_GET['action']:'state';
  $input=array();
  if ($_SERVER['REQUEST_METHOD']==='POST') {
+  if($action==='upload') { $input=$_POST; if(empty($input['csrf'])||!is_string($input['csrf'])||!hash_equals($_SESSION['csrf'],$input['csrf']))fail('Phiên tải tệp không hợp lệ hoặc tệp vượt giới hạn post_max_size của hosting.',403); } else {
   if (stripos(isset($_SERVER['CONTENT_TYPE'])?$_SERVER['CONTENT_TYPE']:'','application/json')!==0) { fail('Yêu cầu phải là JSON.',415); }
   $raw=file_get_contents('php://input', false, null, 0, 65537); if (strlen($raw)>65536) { fail('Dữ liệu quá lớn.',413); }
   $input=json_decode($raw,true); if (!is_array($input)) { fail('Dữ liệu không hợp lệ.',400); }
   if (!isset($input['csrf']) || !is_string($input['csrf']) || !hash_equals($_SESSION['csrf'],$input['csrf'])) { fail('Phiên đã thay đổi. Tải lại trang.',403); }
+  }
  } elseif ($action!=='state' && $action!=='admin_data') { fail('Thao tác này cần POST.',405); }
  $is_admin=admin();
- if ($action==='state') {
+ if(in_array($action,array('student_register','student_login','student_logout','studio_save','studio_control','studio_vote','upload'),true)) { $result=studio_actions($action,$input,$is_admin);
+ } elseif ($action==='state') {
   $result=with_state(function(&$st) use($course,$is_admin) {
    $outline=array(); $visible=array();
    foreach($course['sections'] as $s) {
@@ -72,12 +77,12 @@ try {
    $stats=array();
    foreach($st['responses'] as $sid=>$items) { if ($is_admin || !empty($st['controls']['reveal'][$sid])) { $s=section($sid); $counts=array_fill(0,count($s['options']),0); foreach($items as $r) { $counts[$r['choice']]++; } $stats[$sid]=array('total'=>count($items),'counts'=>$counts); } }
    $pid=isset($_SESSION['participant'])?$_SESSION['participant']:null;
-   $me=$pid && isset($st['participants'][$pid])?$st['participants'][$pid]:null;
+   $me=$pid && isset($st['participants'][$pid])?clean_person($st['participants'][$pid]):null;
    $mine=array(); foreach($st['responses'] as $sid=>$items) { if ($pid && isset($items[$pid])) { $mine[$sid]=$items[$pid]; } }
    $gallery=array();
    foreach($st['controls']['featured'] as $key=>$yes) { if ($yes) { $pair=explode('|',$key); if(count($pair)===2 && isset($st['responses'][$pair[0]][$pair[1]])) { $r=$st['responses'][$pair[0]][$pair[1]]; if(!empty($r['share'])) { $p=$st['participants'][$pair[1]]; $gallery[]=array('section'=>$pair[0],'name'=>$p['name'],'school'=>$p['school'],'submission'=>$r['submission'],'link'=>$r['link']); } } } }
    $public_controls=$st['controls']; if(!$is_admin) unset($public_controls['featured']);
-   return array('server_time'=>time(),'title'=>$course['title'],'presenter'=>$course['presenter'],'sessions'=>$course['sessions'],'tools'=>$course['tools'],'outline'=>$outline,'sections'=>$visible,'controls'=>$public_controls,'stats'=>$stats,'gallery'=>$gallery,'me'=>$me,'mine'=>$mine,'participant_count'=>count($st['participants']),'version'=>$st['version'],'admin'=>$is_admin,'initialized'=>!empty($st['password_hash']),'csrf'=>$_SESSION['csrf']);
+   return array('studio'=>studio_summary($st,$is_admin),'server_time'=>time(),'title'=>$course['title'],'presenter'=>$course['presenter'],'sessions'=>$course['sessions'],'tools'=>$course['tools'],'outline'=>$outline,'sections'=>$visible,'controls'=>$public_controls,'stats'=>$stats,'gallery'=>$gallery,'me'=>$me,'mine'=>$mine,'participant_count'=>count($st['participants']),'version'=>$st['version'],'admin'=>$is_admin,'initialized'=>!empty($st['password_hash']),'csrf'=>$_SESSION['csrf']);
   },false);
  } elseif($action==='login' || $action==='setup') {
   $result=with_state(function(&$st) use($action,$input,$config) {
@@ -147,7 +152,8 @@ try {
    return array('ok'=>true);
   },true);
  } elseif($action==='admin_data') {
-  need_admin(); $result=with_state(function(&$st){ return array('participants'=>$st['participants'],'responses'=>$st['responses'],'audit'=>$st['audit']); },false);
+  need_admin(); $result=with_state(function(&$st){  $people=array();foreach($st['participants'] as $pid=>$p)$people[$pid]=clean_person($p);return array('participants'=>$people,'responses'=>$st['responses'],'studio_votes'=>$st['studio']['votes'],'audit'=>$st['audit']); },false);
  } else { fail('Không có thao tác này.',404); }
  echo json_encode($result,JSON_UNESCAPED_UNICODE);
 } catch(Exception $e) { fail($e->getMessage(),500); }
+

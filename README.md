@@ -1,33 +1,37 @@
-# Tập huấn công nghệ số và AI trong quản lý trường học
+# Tập huấn AI — màn điều khiển và màn trình chiếu
 
-Trang tương tác cho 3 buổi, 18 phần nội dung, do thầy giáo Nguyễn Hồng Dân trình bày.
+Báo cáo viên Nguyễn Hồng Dân. Trang dành cho chương trình tập huấn cán bộ quản lý trường phổ thông, 3 buổi / 18 phần, có nội dung tự tạo.
+
+## Ba địa chỉ
+
+- `control.html`: màn điều khiển của báo cáo viên, cần đăng nhập quản trị.
+- `screen.html`: màn trình chiếu, mở trên máy chiếu/màn hình lớn; tự đồng bộ khoảng 2 giây.
+- `index.html`: trang học viên. QR đưa tới `index.html?checkin=1`.
+
+Trên hosting của trường:
+
+- https://noitruxinman.edu.vn/taphuan/control.html
+- https://noitruxinman.edu.vn/taphuan/screen.html
+- https://noitruxinman.edu.vn/taphuan/
 
 ## Chức năng
 
-- Nội dung, mô hình, tình huống, khảo sát và bài thực hành.
-- Quản trị mở/ẩn từng phần, nhận bài, công bố kết quả và chọn sản phẩm chia sẻ.
-- Học viên truy cập bằng link; đồng bộ trạng thái khoảng 5 giây.
-- Chế độ trình chiếu, đồng hồ, thông báo, bản nháp và xuất CSV.
-- Giao diện trên điện thoại/máy tính; không cần khóa API AI.
+- Maket: tải ảnh/video lên hosting, phủ kín hoặc hiện trọn màn hình; phát, dừng, phát lại và bật/tắt âm.
+- Kiểm diện bằng QR: bắt buộc họ tên, chức vụ, đơn vị, số điện thoại; lưu xong tự đăng nhập.
+- Tài khoản = số điện thoại; mật khẩu ban đầu = tên gọi không dấu, viết thường + 3 số cuối điện thoại.
+- Nguyễn Hồng Dân + 0888770799 → tài khoản 0888770799, mật khẩu dan799. Hệ thống dùng đúng số đã nhập.
+- Đăng nhập lại, chặn tạo trùng số điện thoại, quản trị đặt lại mật khẩu và xuất danh sách CSV.
+- Tự tạo khảo sát, câu hỏi trò chơi 2–6 phương án; mở nhận, tính giờ, công bố đáp án/phân bố và bảng điểm.
+- Tự soạn văn bản, tải ảnh/PDF/TXT/DOCX, chia trang bằng dòng `---`, điều khiển trang PDF.
+- Giữ nội dung 3 buổi và các phản hồi cũ; chiếu từng phần nội dung, tình huống, thực hành, câu lệnh.
+- Footer nhỏ trên cả ba trang theo nội dung thầy yêu cầu.
 
-## Triển khai nhanh
+## Cập nhật cPanel
 
-1. Tải mã nguồn vào một thư mục mới trên hosting PHP.
-2. Sao chép `config.example.php` thành `config.php` trên hosting. Đặt `setup_key` riêng, ngẫu nhiên, ít nhất 24 ký tự; không sử dụng giá trị mẫu.
-3. PHP cần có quyền ghi thư mục dữ liệu. Có thể đặt `data_dir` ngoài thư mục web.
-4. Mở `index.html`, chọn **Quản trị**, dùng `setup_key` và đặt mật khẩu ít nhất 12 ký tự.
-5. Mở nội dung rồi gửi link `index.html` cho học viên.
+`Update from Remote` → `Deploy HEAD Commit`.
 
-**Cần hosting chạy PHP. GitHub Pages chỉ phục vụ tệp tĩnh, không chạy API PHP của ứng dụng này.**
+`.cpanel.yml` triển khai vào `/home/capnachi/noitruxinman.edu.vn/taphuan/`, sao chép cả `assets/`. Không ghi đè `config.php`, không xóa `workshop-data/` hoặc `workshop-media/` đã có.
 
-Xem [HUONG-DAN.md](HUONG-DAN.md) để cài đặt, kiểm tra và điều hành lớp.
+GitHub Pages không chạy API PHP; cần hosting PHP. Không đưa cấu hình riêng, mật khẩu, dữ liệu học viên hoặc tệp tải lên vào GitHub.
 
-## Cấu hình riêng
-
-Không đưa `config.php`, mật khẩu, dữ liệu học viên hoặc bản sao lưu lên GitHub. `.gitignore` đã loại các tệp này. Repository chỉ chứa cấu hình mẫu.
-
-## Kiểm tra
-
-Đã kiểm tra logic giao diện và chức năng API bằng PHP 8.2 WebAssembly; cú pháp PHP được kiểm tra ở mức PHP 5.6. Cần thử session, quyền ghi, phiên bản PHP và giao diện trên hosting trước lớp thật.
-
-Dữ liệu, văn bản chỉ đạo và ghi chép họp dùng trong bài tập là giả lập.
+Xem [HUONG-DAN.md](HUONG-DAN.md) để cài đặt và sử dụng. QR được tạo tại trình duyệt bằng qrcode-generator; không gọi dịch vụ QR bên ngoài. Thông tin giấy phép trong `assets/THIRD-PARTY.txt`.

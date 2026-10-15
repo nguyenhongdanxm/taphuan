@@ -1,4 +1,4 @@
-# Tập huấn AI — phiên bản 3, giao diện xanh sáng
+# Tập huấn AI — phiên bản 4, khảo sát thực trạng và phân tích AI
 
 Báo cáo viên Nguyễn Hồng Dân. Trang dành cho chương trình tập huấn cán bộ quản lý trường phổ thông, 3 buổi / 18 phần, có nội dung tự tạo.
 
@@ -45,3 +45,11 @@ Xem [HUONG-DAN.md](HUONG-DAN.md) để cài đặt và sử dụng. QR được 
 ## Bật trợ lý AI
 
 Điều khiển → Cài đặt AI → chọn Gemini/OpenAI → dán khóa API → Lưu cài đặt → Kiểm tra kết nối. Model đã điền sẵn và có thể đổi theo quyền của khóa. Hosting cần PHP cURL, OpenSSL và kết nối HTTPS tới nhà cung cấp. Có thể dùng các chức năng tập huấn không có AI khi chưa nhập khóa. AI maket cung cấp lời dẫn/kịch bản/gợi ý hình ảnh; không tự sinh tệp ảnh hay video.
+
+## Khảo sát thực trạng 15 câu (bản 4)
+
+Mục **Khảo sát thực trạng** đã có sẵn bộ 15 câu, 4 nhóm: bức tranh hiện tại; thuận lợi/nguồn lực; khó khăn/điểm nghẽn; giải pháp/ưu tiên. Học viên dùng tài khoản kiểm diện để gửi một phiếu đầy đủ, có thể cập nhật khi còn mở. Câu chọn nhiều cho phép 1–3 phương án, câu cuối chia sẻ thực tế.
+
+Báo cáo viên: **Chiếu mở đầu → Mở nhận 15 câu → Kết thúc & tự phân tích AI**. Giữ trang điều khiển mở để khởi chạy yêu cầu AI. Dữ liệu thống kê được tổng hợp ngay; khóa AI hiện có được dùng để tạo và lưu báo cáo 7 phần. Có biểu đồ từng câu, danh sách đã/chưa gửi, xuất CSV thống kê, tải báo cáo TXT và nút chiếu từng phần. Lỗi API không làm mất phiếu, có nút thử lại.
+
+Không có cron/chạy nền khi mọi trang điều khiển đều đóng. Có thể mở lại điều khiển để xử lý tác vụ đang chờ. Phiếu và báo cáo lưu trên hosting, không đưa vào GitHub.

@@ -1,4 +1,4 @@
-# Hướng dẫn vận hành tập huấn AI — bản 3, giao diện xanh sáng
+# Hướng dẫn vận hành tập huấn AI — bản 4, khảo sát thực trạng và phân tích AI
 
 ## 1. Các địa chỉ
 
@@ -14,7 +14,7 @@ cPanel → Git Version Control → Manage → Pull or Deploy → Update from Rem
 
 Đường dẫn triển khai: /home/capnachi/noitruxinman.edu.vn/taphuan/.
 
-Gói sao chép index.html, control.html, screen.html, api.php, studio.php, ai.php, course.php, config.example.php, sample-data.csv, .htaccess và assets/. Giữ nguyên config.php, workshop-data/ và workshop-media/. Cấu hình mẫu chỉ được sao chép thành config.php nếu chưa có tệp đó. Không đổi Document Root hay sửa hệ thống CDS.
+Gói sao chép index.html, control.html, screen.html, api.php, studio.php, ai.php, survey.php, course.php, config.example.php, sample-data.csv, .htaccess và assets/. Giữ nguyên config.php, workshop-data/ và workshop-media/. Cấu hình mẫu chỉ được sao chép thành config.php nếu chưa có tệp đó. Không đổi Document Root hay sửa hệ thống CDS.
 
 Sau khi deploy, tải lại cả màn điều khiển/màn chiếu/học viên để nhận giao diện mới. Không chỉnh tệp trong bản checkout Git ở cPanel, để Update from Remote tiếp tục hoạt động.
 
@@ -107,3 +107,33 @@ Khóa API cần hạn mức và quyền dùng model; thuê bao ChatGPT/Gemini c�
 ## 12. Kiểm tra bản 3
 
 Đã kiểm tra API bằng PHP 8.2 WebAssembly, cú pháp tương thích PHP 5.6 và logic giao diện/QR trong Node: nâng cấp dữ liệu cũ, kiểm diện, khảo sát, điểm trò chơi, danh sách đã/chưa trả lời, nút chiếu từng ý, chiếu văn bản tùy chọn, điều khiển video không khởi động lại khi tạm dừng. Kiểm tra AI dùng phản hồi mô phỏng của Gemini/OpenAI để xác nhận định dạng yêu cầu, xử lý bản nháp, quyền quản trị, CSRF và mã hóa/không lộ khóa. Chưa gọi API AI thật bằng khóa của thầy và chưa kiểm tra trực quan trên hosting. Sau deploy, nhập khóa và thử Kiểm tra kết nối, tạo một câu khảo sát, lưu, chiếu và trả lời bằng tài khoản kiểm diện trên thiết bị khác.
+
+## 13. Khảo sát thực trạng 15 câu và tự phân tích AI
+
+Sau Update from Remote → Deploy HEAD Commit, tải lại các trang để nhận tài nguyên ?v=4. Vào Điều khiển → Khảo sát thực trạng. Bộ câu hỏi có sẵn, không phải nhập thủ công:
+
+| Nhóm | Câu | Nội dung |
+| --- | --- | --- |
+| I. Bức tranh hiện tại | 1–3 | Mức ứng dụng; tần suất dùng AI; công việc đang ứng dụng |
+| II. Thuận lợi và nguồn lực | 4–7 | Hạ tầng; đội ngũ hỗ trợ; thuận lợi nổi bật; chỉ đạo/phối hợp |
+| III. Khó khăn và điểm nghẽn | 8–11 | Rào cản lớn; nhập dữ liệu trùng; cơ chế quản trị; chất lượng dữ liệu |
+| IV. Giải pháp và ưu tiên | 12–15 | Giải pháp đang thực hiện; chuyển biến tự đánh giá; ưu tiên hỗ trợ; chia sẻ thực tế |
+
+**Quy trình tổ chức:**
+
+1. Chiếu mở đầu: màn chào có QR, mục đích, 4 nhóm và hướng dẫn. QR đưa học viên thẳng tới mục khảo sát sau kiểm diện.
+2. Mở nhận 15 câu: mỗi tài khoản kiểm diện điền đủ 15 câu rồi gửi toàn bộ. Có thể cập nhật cùng phiếu khi còn mở; không tăng số phiếu. Câu chọn nhiều tối đa 3 phương án; phương án Chưa có/Chưa ứng dụng chọn riêng. Câu 15 tối đa 1.000 ký tự, không ghi thông tin định danh.
+3. Có thể Chiếu từng câu để giải thích, dùng Câu trước/Câu tiếp. Danh sách đã/chưa gửi lấy từ tài khoản kiểm diện.
+4. Bấm **Kết thúc & tự phân tích AI**: khóa nhận phiếu và công bố thống kê; trang điều khiển tự gọi khóa AI đã lưu. Giữ trang điều khiển mở cho đến khi tác vụ khởi chạy. Không có cron/background worker khi mọi trang điều khiển đều đóng. Nếu đóng trước khi chạy, mở lại điều khiển để tiếp tục tác vụ đang chờ.
+5. Chiếu kết quả từng câu hoặc chiếu từng phần phân tích. AI không tự chiếu báo cáo chưa được báo cáo viên chọn. Dùng nút Thử lại nếu lỗi dịch vụ; dữ liệu khảo sát vẫn giữ. Nếu yêu cầu đang chạy bị gián đoạn, chờ hơn 2 phút rồi thử lại.
+6. Xuất thống kê CSV (không xuất danh tính và chia sẻ nguyên văn), sao chép hoặc tải báo cáo TXT. Mở lại khảo sát giữ nguyên phiếu, cho phép cập nhật; báo cáo cũ ngừng công bố và phải tổng hợp lại khi kết thúc đợt bổ sung.
+
+**Báo cáo AI có 7 phần:** quy mô/giới hạn; thuận lợi; khó khăn; giải pháp/mức chuyển biến; ưu tiên tập huấn 3 buổi; hành động 30–60–90 ngày; vấn đề cần kiểm chứng/thảo luận. Kết quả lưu trên hosting để xem lại. Một yêu cầu đang xử lý không gọi lại trùng ngay; kết quả cùng nguồn dữ liệu được dùng lại. Thay đổi khảo sát trong khi AI xử lý khiến kết quả cũ bị loại, tránh ghi đè báo cáo của phiên mới.
+
+**Cách đọc số liệu:** tỷ lệ theo người trả lời từng câu, không phải tỷ lệ trường. Nhiều cán bộ một trường vẫn là nhiều người trả lời. Số đơn vị chỉ là số tên đơn vị tự khai khác nhau, chưa chuẩn hóa. Câu chọn nhiều có tổng tỷ lệ có thể trên 100%. Không chấm điểm/xếp loại nhà trường; ưu tiên và giải pháp là gợi ý cần thảo luận.
+
+Bối cảnh AI không tự lấy tên và số điện thoại hồ sơ. Câu 15 được che chuỗi số điện thoại/email theo mẫu trước khi gửi, nhưng người nhập vẫn cần tránh mọi thông tin định danh. Để giới hạn độ dài, AI đọc tối đa 50 chia sẻ đầu, mỗi chia sẻ tối đa 600 ký tự; báo cáo phải nêu phạm vi mẫu văn bản này. Thống kê định lượng dùng toàn bộ phiếu hợp lệ.
+
+**Bố cục trình chiếu:** phần học có đề mục đánh số, thẻ nội dung, luồng mô hình; khảo sát có màn mở đầu QR, lựa chọn A–G, biểu đồ ngang và các trang báo cáo AI riêng. Nội dung dài có thể cuộn, nên thử độ phân giải máy chiếu trước buổi tập huấn.
+
+Đã kiểm tra API khảo sát trên PHP 8.2 WebAssembly, cú pháp PHP 5.6 và logic giao diện Node: đủ 15 câu, tài khoản kiểm diện, chọn nhiều/chọn riêng, cập nhật phiếu, thống kê, phân quyền, tự khởi chạy AI, lưu báo cáo, dùng lại kết quả, thử lại khi lỗi và loại kết quả cũ. AI kiểm tra bằng phản hồi mô phỏng; cần thử một lần với khóa thực trên hosting sau triển khai. Chưa kiểm tra trực quan trên máy chiếu thật.

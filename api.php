@@ -11,6 +11,7 @@ if (!is_array($config) || empty($config['setup_key']) || strlen($config['setup_k
 $course = require __DIR__ . '/course.php';
 require_once __DIR__ . '/studio.php';
 require_once __DIR__ . '/ai.php';
+require_once __DIR__ . '/survey.php';
 $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 ini_set('session.use_strict_mode', '1');
 session_name('AIWORKSHOP');
@@ -37,6 +38,7 @@ function with_state($callback, $write) {
    $state=json_decode(substr($raw,strlen($prefix)),true); if (!is_array($state) || !isset($state['controls'])) { throw new Exception('Dữ liệu lỗi; cần kiểm tra bản sao lưu.'); }
   } else { $raw=null; $state=initial_state(); }
   studio_defaults($state);
+  survey_defaults($state);
   $result=call_user_func_array($callback,array(&$state));
   if ($write) {
    $state['version']++;
@@ -67,7 +69,8 @@ try {
   }
  } elseif ($action!=='state' && $action!=='admin_data') { fail('Thao tác này cần POST.',405); }
  $is_admin=admin();
- if(in_array($action,array('ai_settings','ai_save','ai_generate'),true)) { $result=ai_actions($action,$input);
+ if(in_array($action,array('survey_submit','survey_control','survey_analyze'),true)){$result=survey_actions($action,$input);
+ } elseif(in_array($action,array('ai_settings','ai_save','ai_generate'),true)) { $result=ai_actions($action,$input);
  } elseif(in_array($action,array('student_register','student_login','student_logout','studio_save','studio_control','studio_vote','upload'),true)) { $result=studio_actions($action,$input,$is_admin);
  } elseif ($action==='state') {
   $result=with_state(function(&$st) use($course,$is_admin) {
@@ -85,7 +88,7 @@ try {
    foreach($st['controls']['featured'] as $key=>$yes) { if ($yes) { $pair=explode('|',$key); if(count($pair)===2 && isset($st['responses'][$pair[0]][$pair[1]])) { $r=$st['responses'][$pair[0]][$pair[1]]; if(!empty($r['share'])) { $p=$st['participants'][$pair[1]]; $gallery[]=array('section'=>$pair[0],'name'=>$p['name'],'school'=>$p['school'],'submission'=>$r['submission'],'link'=>$r['link']); } } } }
    $public_controls=$st['controls']; if(!$is_admin) unset($public_controls['featured']);
    $checked=0;foreach($st['participants'] as $person)if(!empty($person['phone']))$checked++;
-   return array('checked_in_count'=>$checked,'ai'=>$is_admin?ai_meta():null,'studio'=>studio_summary($st,$is_admin),'server_time'=>time(),'title'=>$course['title'],'presenter'=>$course['presenter'],'sessions'=>$course['sessions'],'tools'=>$course['tools'],'outline'=>$outline,'sections'=>$visible,'controls'=>$public_controls,'stats'=>$stats,'gallery'=>$gallery,'me'=>$me,'mine'=>$mine,'participant_count'=>count($st['participants']),'version'=>$st['version'],'admin'=>$is_admin,'initialized'=>!empty($st['password_hash']),'csrf'=>$_SESSION['csrf']);
+   return array('survey'=>survey_summary($st,$is_admin),'checked_in_count'=>$checked,'ai'=>$is_admin?ai_meta():null,'studio'=>studio_summary($st,$is_admin),'server_time'=>time(),'title'=>$course['title'],'presenter'=>$course['presenter'],'sessions'=>$course['sessions'],'tools'=>$course['tools'],'outline'=>$outline,'sections'=>$visible,'controls'=>$public_controls,'stats'=>$stats,'gallery'=>$gallery,'me'=>$me,'mine'=>$mine,'participant_count'=>count($st['participants']),'version'=>$st['version'],'admin'=>$is_admin,'initialized'=>!empty($st['password_hash']),'csrf'=>$_SESSION['csrf']);
   },false);
  } elseif($action==='login' || $action==='setup') {
   $result=with_state(function(&$st) use($action,$input,$config) {

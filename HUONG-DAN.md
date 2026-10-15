@@ -137,3 +137,15 @@ Bối cảnh AI không tự lấy tên và số điện thoại hồ sơ. Câu 1
 **Bố cục trình chiếu:** phần học có đề mục đánh số, thẻ nội dung, luồng mô hình; khảo sát có màn mở đầu QR, lựa chọn A–G, biểu đồ ngang và các trang báo cáo AI riêng. Nội dung dài có thể cuộn, nên thử độ phân giải máy chiếu trước buổi tập huấn.
 
 Đã kiểm tra API khảo sát trên PHP 8.2 WebAssembly, cú pháp PHP 5.6 và logic giao diện Node: đủ 15 câu, tài khoản kiểm diện, chọn nhiều/chọn riêng, cập nhật phiếu, thống kê, phân quyền, tự khởi chạy AI, lưu báo cáo, dùng lại kết quả, thử lại khi lỗi và loại kết quả cũ. AI kiểm tra bằng phản hồi mô phỏng; cần thử một lần với khóa thực trên hosting sau triển khai. Chưa kiểm tra trực quan trên máy chiếu thật.
+
+## 14. Khi báo model hoặc phiên bản không hỗ trợ
+
+1. cPanel → Update from Remote → Deploy HEAD Commit; tải lại màn điều khiển để nhận app.js?v=5.
+2. Mở Cài đặt AI, chọn đúng nhà cung cấp. Nếu khóa đã lưu, để trống ô khóa; nếu đổi nhà cung cấp, nhập khóa tương ứng.
+3. Bấm **Tự chọn model & kiểm tra**. Hệ thống lưu `auto`, truy vấn danh sách model qua chính khóa này và thử một yêu cầu tạo văn bản. Sau thành công sẽ hiện model thực tế đã dùng. Không tự đổi model cũ khi deploy.
+4. Nếu cần chọn cụ thể: **Lưu & tải danh sách model** → bấm vào ô Model chọn tên → **Lưu & kiểm tra kết nối**. Với Gemini, chấp nhận tên có tiền tố models/ và tự chuẩn hóa. Danh sách được lọc cho tác vụ văn bản, không xác nhận hạn mức hoặc mọi tính năng; vẫn cần kiểm tra kết nối.
+5. Khi còn lỗi, đọc thông báo ngay dưới các nút: HTTP 400 là tham số/model không phù hợp; 401 là khóa không hợp lệ; 403 là quyền/dịch vụ/khóa bị chặn; 404 là model/phiên bản không có; 429 là hạn mức/tốc độ. Thông báo có chi tiết từ nhà cung cấp và che khóa. Có thể gửi nguyên dòng lỗi để hỗ trợ tiếp, không cần gửi khóa.
+
+Chế độ auto của Gemini truy vấn /v1beta/models, lọc supportedGenerationMethods có generateContent và model văn bản. Ưu tiên Flash ổn định; không tự chọn Pro. OpenAI truy vấn /v1/models, dùng model nhỏ được liệt kê trong nhóm ứng dụng hỗ trợ; nếu không tìm thấy, yêu cầu chọn thủ công. Không thử liên tiếp nhiều model để tránh phát sinh yêu cầu không cần thiết.
+
+Đã kiểm tra bằng mô phỏng: GET danh sách không gửi body, phân trang, loại model ảnh/âm thanh/embedding, chọn model, lưu trước khi kiểm tra, chuẩn hóa tên, JSON có code fence, che khóa trong lỗi và tên model thực tế. Chưa thử bằng khóa thật trên hosting của thầy.

@@ -70,7 +70,7 @@ try {
  } elseif ($action!=='state' && $action!=='admin_data') { fail('Thao tác này cần POST.',405); }
  $is_admin=admin();
  if(in_array($action,array('survey_submit','survey_control','survey_analyze'),true)){$result=survey_actions($action,$input);
- } elseif(in_array($action,array('ai_settings','ai_save','ai_generate'),true)) { $result=ai_actions($action,$input);
+ } elseif(in_array($action,array('ai_settings','ai_save','ai_generate','ai_models'),true)) { $result=ai_actions($action,$input);
  } elseif(in_array($action,array('student_register','student_login','student_logout','studio_save','studio_control','studio_vote','upload'),true)) { $result=studio_actions($action,$input,$is_admin);
  } elseif ($action==='state') {
   $result=with_state(function(&$st) use($course,$is_admin) {

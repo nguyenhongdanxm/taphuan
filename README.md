@@ -53,3 +53,9 @@ Mục **Khảo sát thực trạng** đã có sẵn bộ 15 câu, 4 nhóm: bức
 Báo cáo viên: **Chiếu mở đầu → Mở nhận 15 câu → Kết thúc & tự phân tích AI**. Giữ trang điều khiển mở để khởi chạy yêu cầu AI. Dữ liệu thống kê được tổng hợp ngay; khóa AI hiện có được dùng để tạo và lưu báo cáo 7 phần. Có biểu đồ từng câu, danh sách đã/chưa gửi, xuất CSV thống kê, tải báo cáo TXT và nút chiếu từng phần. Lỗi API không làm mất phiếu, có nút thử lại.
 
 Không có cron/chạy nền khi mọi trang điều khiển đều đóng. Có thể mở lại điều khiển để xử lý tác vụ đang chờ. Phiếu và báo cáo lưu trên hosting, không đưa vào GitHub.
+
+## Sửa lỗi model/phiên bản API (bản 5)
+
+Cập nhật trên cPanel rồi vào **Cài đặt AI → Tự chọn model & kiểm tra**. Nếu khóa đã lưu, giữ ô khóa trống. Model `auto` lấy danh sách thực từ nhà cung cấp: Gemini chỉ chọn model Flash ổn định có `generateContent`, không tự chuyển sang Pro; OpenAI chọn model nhỏ trong danh sách hỗ trợ của ứng dụng khi được API liệt kê. Không bảo đảm quyền/hạn mức chỉ từ danh sách, vì vậy phải thử kết nối.
+
+Có **Lưu & tải danh sách model** để chọn thủ công. **Lưu & kiểm tra kết nối** luôn dùng cấu hình vừa nhập, hiển thị model thực tế hoặc lỗi HTTP/chi tiết nhà cung cấp đã che khóa. Cấu hình cũ không bị ghi đè khi deploy; bấm nút tự chọn để chuyển model đang lưu sang `auto`.

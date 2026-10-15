@@ -149,3 +149,7 @@ Bối cảnh AI không tự lấy tên và số điện thoại hồ sơ. Câu 1
 Chế độ auto của Gemini truy vấn /v1beta/models, lọc supportedGenerationMethods có generateContent và model văn bản. Ưu tiên Flash ổn định; không tự chọn Pro. OpenAI truy vấn /v1/models, dùng model nhỏ được liệt kê trong nhóm ứng dụng hỗ trợ; nếu không tìm thấy, yêu cầu chọn thủ công. Không thử liên tiếp nhiều model để tránh phát sinh yêu cầu không cần thiết.
 
 Đã kiểm tra bằng mô phỏng: GET danh sách không gửi body, phân trang, loại model ảnh/âm thanh/embedding, chọn model, lưu trước khi kiểm tra, chuẩn hóa tên, JSON có code fence, che khóa trong lỗi và tên model thực tế. Chưa thử bằng khóa thật trên hosting của thầy.
+
+## 15. Sửa lỗi OpenAI yêu cầu từ JSON trong input
+
+Bản tài nguyên v6 thêm chỉ dẫn JSON trực tiếp vào input gửi tới Responses API, ngoài hướng dẫn hệ thống. Khắc phục HTTP 400: Response input messages must contain the word json ... json_object. Sau deploy tải lại màn điều khiển. Giữ nguyên khóa và model đã cấu hình; không cần đổi khóa vì lỗi này. Dòng trạng thái tạo bản nháp cũng được cập nhật khi thất bại.

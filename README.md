@@ -25,7 +25,6 @@ Trên hosting của trường:
 - Maket: tải ảnh/video lên hosting, phủ kín hoặc hiện trọn màn hình; phát, dừng, phát lại và bật/tắt âm.
 - Kiểm diện bằng QR: bắt buộc họ tên, chức vụ, đơn vị, số điện thoại; lưu xong tự đăng nhập.
 - Tài khoản = số điện thoại; mật khẩu ban đầu = tên gọi không dấu, viết thường + 3 số cuối điện thoại.
-- Nguyễn Hồng Dân + 0888770799 → tài khoản 0888770799, mật khẩu dan799. Hệ thống dùng đúng số đã nhập.
 - Đăng nhập lại, chặn tạo trùng số điện thoại, quản trị đặt lại mật khẩu và xuất danh sách CSV.
 - Tự tạo khảo sát, câu hỏi trò chơi 2–6 phương án; mở nhận, tính giờ, công bố đáp án/phân bố và bảng điểm.
 - Tự soạn văn bản, tải ảnh/PDF/TXT/DOCX, chia trang bằng dòng `---`, điều khiển trang PDF.

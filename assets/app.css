@@ -15,3 +15,9 @@ body{background:radial-gradient(ellipse at 85% 0,#d8f2e5 0,transparent 50%),#f1f
 @media(max-width:560px){.survey-banner{display:block}.survey-banner .btn{margin-top:14px}.survey-intro-grid{grid-template-columns:1fr}.survey-qr-panel .qr{max-width:170px}.survey-topics,.survey-options,.lesson-points{grid-template-columns:1fr}.survey-steps{grid-template-columns:1fr}.survey-question{padding:13px}.survey-question legend{font-size:15px}.survey-options .survey-option{font-size:16px;padding:10px}.survey-slide-title{font-size:25px}.survey-chart .bar-head{font-size:15px}.option-letter{width:32px;height:32px;border-radius:8px}.slide-meta{font-size:9px;letter-spacing:.5px}.survey-slide,.lesson-slide{max-height:calc(100vh - 105px)}.report-slide{padding:17px}}
 
 .survey-question{scroll-margin-top:95px}.survey-jump{gap:9px}.survey-chart .fill{transition:width .6s ease}.survey-result .fill{transition:width .4s ease}@media(prefers-reduced-motion:reduce){.survey-chart .fill,.survey-result .fill{transition:none}}
+
+.greet-box{background:linear-gradient(135deg,#e8f7f0,#e3efff);border:1px solid #bfe3d2;border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:left}
+.greet-box strong{font-size:17px}
+.greet-box p{margin:6px 0 0}
+.roster-people{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.roster-people .note{width:100%}

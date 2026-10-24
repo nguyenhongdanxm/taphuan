@@ -34,7 +34,7 @@ Nếu API bị NukeViet chặn GET /api.php, áp dụng ngoại lệ chính xác
 
 QR chứa địa chỉ trang học viên có checkin=1. Tạo QR ngay trên trình duyệt, không gửi thông tin tới dịch vụ QR bên ngoài. Học viên nhập đủ họ tên, chức vụ, đơn vị, số điện thoại. Điện thoại chuẩn hóa 10 chữ số bắt đầu 0; +84 được đổi sang 0. Lưu xong tạo tài khoản và tự đăng nhập.
 
-Quy tắc mật khẩu ban đầu: lấy từ cuối của họ tên, bỏ dấu tiếng Việt, viết thường, nối 3 số cuối điện thoại. Nguyễn Hồng Dân + 0888770799 → dan799. Nếu nhập 0888770699 thì mật khẩu là dan699. Tên và số điện thoại được lấy từ biểu mẫu, không tự sửa theo ví dụ.
+Quy tắc mật khẩu ban đầu: lấy từ cuối của họ tên, bỏ dấu tiếng Việt, viết thường, nối 3 số cuối điện thoại. Tên và số điện thoại được lấy từ biểu mẫu; không dùng ví dụ tài khoản thật trong tài liệu.
 
 Học viên thấy tài khoản/mật khẩu của chính mình sau đăng ký; ghi lại để dùng trên thiết bị khác. Số điện thoại đã có không tạo lại; dùng Đã có tài khoản để đăng nhập. Quản trị có thể đặt lại mật khẩu về quy tắc ban đầu trong danh sách học viên.
 

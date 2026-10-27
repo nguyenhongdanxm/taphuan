@@ -12,6 +12,7 @@ $course = require __DIR__ . '/course.php';
 require_once __DIR__ . '/studio.php';
 require_once __DIR__ . '/ai.php';
 require_once __DIR__ . '/survey.php';
+require_once __DIR__ . '/portal.php';
 $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 ini_set('session.use_strict_mode', '1');
 session_name('AIWORKSHOP');
@@ -39,6 +40,7 @@ function with_state($callback, $write) {
   } else { $raw=null; $state=initial_state(); }
   studio_defaults($state);
   survey_defaults($state);
+  portal_defaults($state);
   $result=call_user_func_array($callback,array(&$state));
   if ($write) {
    $state['version']++;
@@ -63,13 +65,14 @@ try {
  if ($_SERVER['REQUEST_METHOD']==='POST') {
   if($action==='upload') { $input=$_POST; if(empty($input['csrf'])||!is_string($input['csrf'])||!hash_equals($_SESSION['csrf'],$input['csrf']))fail('Phiên tải tệp không hợp lệ hoặc tệp vượt giới hạn post_max_size của hosting.',403); } else {
   if (stripos(isset($_SERVER['CONTENT_TYPE'])?$_SERVER['CONTENT_TYPE']:'','application/json')!==0) { fail('Yêu cầu phải là JSON.',415); }
-  $raw=file_get_contents('php://input', false, null, 0, 65537); if (strlen($raw)>65536) { fail('Dữ liệu quá lớn.',413); }
+  $raw=file_get_contents('php://input', false, null, 0, 131073); if (strlen($raw)>131072) { fail('Dữ liệu quá lớn.',413); }
   $input=json_decode($raw,true); if (!is_array($input)) { fail('Dữ liệu không hợp lệ.',400); }
   if (!isset($input['csrf']) || !is_string($input['csrf']) || !hash_equals($_SESSION['csrf'],$input['csrf'])) { fail('Phiên đã thay đổi. Tải lại trang.',403); }
   }
- } elseif ($action!=='state' && $action!=='admin_data') { fail('Thao tác này cần POST.',405); }
+ } elseif ($action!=='state' && $action!=='portal_state' && $action!=='admin_data') { fail('Thao tác này cần POST.',405); }
  $is_admin=admin();
- if(in_array($action,array('survey_submit','survey_control','survey_analyze'),true)){$result=survey_actions($action,$input);
+ if(strpos($action,'portal_')===0){$result=portal_actions($action,$input,$is_admin);
+ } elseif(in_array($action,array('survey_submit','survey_control','survey_analyze'),true)){$result=survey_actions($action,$input);
  } elseif(in_array($action,array('ai_settings','ai_save','ai_generate','ai_models'),true)) { $result=ai_actions($action,$input);
  } elseif(in_array($action,array('student_register','student_login','student_logout','studio_save','studio_control','studio_vote','upload'),true)) { $result=studio_actions($action,$input,$is_admin);
  } elseif ($action==='state') {
@@ -162,4 +165,5 @@ try {
  } else { fail('Không có thao tác này.',404); }
  echo json_encode($result,JSON_UNESCAPED_UNICODE);
 } catch(Exception $e) { fail($e->getMessage(),500); }
+
 

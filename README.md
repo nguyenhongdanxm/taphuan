@@ -5,7 +5,7 @@ Website tập huấn dành cho cán bộ quản lý trường phổ thông. Mộ
 ## Năm mục chính
 
 1. **Trang chủ:** lời chào, tên đợt tập huấn, giới thiệu, báo cáo viên, đơn vị tổ chức, thời gian, địa điểm và thông báo. Quản trị sửa trực tiếp trên website.
-2. **Kiểm diện:** mã QR dẫn đến popup điểm danh. Chọn trường có một người sẽ tự điền tên/chức vụ; trường có nhiều người cho chọn đúng người. Thông tin còn thiếu được nhập bổ sung. Nhập số điện thoại rồi bấm Điểm danh để tự vào tài khoản. Danh sách bổ sung được lưu trên hosting và xuất hiện trên thiết bị khác/lần sau. Điểm danh lại bằng cùng tên, trường và số điện thoại dùng lại tài khoản, giữ nguyên phiếu khảo sát.
+2. **Kiểm diện theo buổi:** quản trị tạo buổi (tên, ngày), mở QR có chữ ký máy chủ tự đổi mỗi 20 giây. Khi quét mã còn hiệu lực, popup ban đầu chỉ có chọn trường; sau đó hiện tên/chức vụ, mời bổ sung phần thiếu, cuối cùng mới hiện số điện thoại và nút Điểm danh. Mỗi người một bản ghi trong mỗi buổi. Có danh sách đã/chưa điểm danh, thời điểm và xuất CSV theo buổi.
 3. **Khảo sát:** giữ bộ 15 câu hiện có (câu chọn một/chọn nhiều và một câu chia sẻ thực tế), mỗi tài khoản một phiếu, cập nhật khi còn mở. Quản trị có danh sách đã/chưa gửi, biểu đồ từng câu, tỷ lệ hoàn thành, xuất CSV, công bố/ẩn kết quả và phân tích AI.
 4. **Nội dung tập huấn:** khởi tạo 18 chuyên đề từ nội dung 3 buổi hiện có, phân nhóm, tìm kiếm, xem nội dung và sao chép câu lệnh. Quản trị thêm/sửa/xóa, đặt thứ tự, thời lượng và công bố/giữ nháp. AI điền bản nháp vào biểu mẫu để người dùng kiểm tra trước khi lưu.
 5. **Công cụ:** danh sách công cụ, liên kết, hướng dẫn và câu lệnh mẫu; có thư viện câu lệnh theo chuyên đề. Quản trị thêm/sửa/xóa.
@@ -14,7 +14,7 @@ Website tập huấn dành cho cán bộ quản lý trường phổ thông. Mộ
 
 - `index.html`: cổng tập huấn; nút **Quản trị** để đăng nhập.
 - `control.html`: địa chỉ quản trị cũ vẫn mở cùng cổng mới.
-- `index.html?checkin=1`: popup điểm danh tự mở khi chưa vào tài khoản; được dùng cho QR.
+- `index.html?attendance=…&slot=…&signature=…`: đường dẫn do QR có thời hạn tạo ra; không dùng liên kết cố định để điểm danh. `?checkin=1` cũ chỉ mở thông tin tài khoản/đăng nhập khi không có quyền quét hợp lệ.
 - `screen.html`: tự chuyển về `index.html`, không còn chế độ màn chiếu.
 
 ## Cài đặt và nâng cấp cPanel
@@ -24,10 +24,20 @@ Hosting cần PHP có session, JSON, OpenSSL, password_hash, hash_equals và quy
 1. Lần đầu: sao chép `config.example.php` thành `config.php`, thay `setup_key` bằng chuỗi riêng ít nhất 24 ký tự. Mở website → Quản trị → khởi tạo mật khẩu ít nhất 12 ký tự.
 2. Khi nâng cấp: sao lưu `config.php`, `workshop-data/`, `workshop-media/` bằng chức năng backup của hosting. Cập nhật mã nguồn bằng **Update from Remote → Deploy HEAD Commit** sau khi thay đổi được gộp vào nhánh triển khai.
 3. `.cpanel.yml` có sẵn đường dẫn triển khai của trường. Nếu dùng hosting khác, sửa đường dẫn trong tệp này trước khi triển khai.
-4. Deploy giữ `config.php`, không xóa thư mục dữ liệu hoặc tệp tải lên. Các tệp mới `portal.php` và `roster-seed.php` được triển khai cùng mã nguồn.
-5. Tải lại trang để dùng tài nguyên `v=8`. Vào Quản trị → Trang chủ → Sửa thông tin để điền thời gian, địa điểm và đơn vị tổ chức.
+4. Deploy giữ `config.php`, không xóa thư mục dữ liệu hoặc tệp tải lên. Các tệp mới `portal.php`, `attendance.php` và `roster-seed.php` được triển khai cùng mã nguồn.
+5. Tải lại trang để dùng tài nguyên `v=9`. Vào Quản trị → Trang chủ → Sửa thông tin để điền thời gian, địa điểm và đơn vị tổ chức.
 
 Dữ liệu chuyên đề, công cụ và thông tin đợt tập huấn được khởi tạo khi mở cổng mới và lưu cùng trạng thái ở lần ghi tiếp theo. Nội dung gốc được đọc từ `course.php`; danh sách trường/người gốc từ `roster-seed.php`. Khi đã khởi tạo, dữ liệu biên tập trên hosting là dữ liệu chính, không bị thay bằng nội dung gốc mỗi lần deploy. Phiếu khảo sát, tài khoản và phản hồi cũ không bị xóa.
+
+## Điểm danh theo buổi và QR 20 giây
+
+Quản trị → Kiểm diện → Tạo buổi tập huấn → điền tên/ngày → Tạo buổi & mở QR. Tạo/mở một buổi sẽ đóng buổi đang mở, giữ nguyên thống kê. Chọn buổi trong danh sách để xem thống kê hoặc mở lại; nút Kết thúc điểm danh thu hồi mã và các popup chưa hoàn tất của buổi đó. Có nút phóng to QR ngay trên trang, không cần màn chiếu riêng.
+
+QR gồm mã buổi, chu kỳ 20 giây và chữ ký HMAC. Máy chủ chỉ nhận chu kỳ hiện tại của buổi còn mở; sửa số chu kỳ hoặc gửi mã cũ không vượt được kiểm tra chữ ký/thời hạn. Chỉ quản trị được lấy QR mới. Khi quét hợp lệ, trình duyệt được cấp quyền điền phiếu trong 10 phút; người dùng không phải quét lại mỗi 20 giây trong lúc nhập. Quyền này chỉ dùng cho buổi vừa quét, bị thu hồi khi đóng/mở lại buổi và được dùng hết sau khi điểm danh thành công. Liên kết QR được xóa khỏi thanh địa chỉ sau khi xử lý.
+
+Người đã đăng nhập vẫn cần quét QR mới và bấm điểm danh cho từng buổi. Đăng nhập tài khoản (số điện thoại + mật khẩu) chỉ vào nội dung học, không ghi nhận có mặt. Sau điểm danh lần đầu, giao diện hiển thị mật khẩu ban đầu để lưu cho lần đăng nhập sau. Cùng trường, tên và số điện thoại dùng lại tài khoản, giữ phiếu khảo sát; không tăng số người khi điểm danh lại cùng buổi.
+
+Danh sách dự kiến là ảnh chụp danh sách trường/người khi tạo buổi; người tự bổ sung được thêm vào chính buổi đang điểm danh. Tài khoản/phiếu cũ không bị chuyển thành có mặt ở buổi mới. QR ngắn hạn giảm việc chia sẻ liên kết cố định; vẫn có thể bị chuyển tiếp ngay khi còn hạn, nên không thay việc kiểm tra hiện diện của báo cáo viên.
 
 ## AI
 
@@ -51,7 +61,8 @@ Node.js 18+ và PHP CLI:
 
 ```bash
 node tests/renderers.cjs
+php -n tests/attendance.php
 PHP_BIN=/path/to/php node tests/integration.cjs
 ```
 
-Kiểm thử API tự tạo bản sao và dữ liệu giả trong thư mục tạm, không đọc/ghi cấu hình thật. Phạm vi: nâng cấp dữ liệu cũ, điểm danh mới/lại, chống trùng số điện thoại, lưu danh sách, gửi/cập nhật khảo sát theo tài khoản, quyền truy cập, CRUD và xung đột phiên bản. Kiểm thử kết xuất: năm mục, biểu mẫu 15 câu, thống kê, escape nội dung/liên kết và các trường hợp tự điền theo trường. Không gọi API AI thật.
+Kiểm thử API tự tạo bản sao và dữ liệu giả trong thư mục tạm, không đọc/ghi cấu hình thật. Phạm vi: nâng cấp dữ liệu cũ, điểm danh mới/lại, chống trùng số điện thoại, lưu danh sách, gửi/cập nhật khảo sát theo tài khoản, quyền truy cập, CRUD và xung đột phiên bản. Kiểm thử kết xuất: năm mục, biểu mẫu 15 câu, thống kê, escape nội dung/liên kết và các trường hợp tự điền theo trường. Bổ sung kiểm thử chu kỳ QR đúng 20 giây, mã hết hạn/sai chữ ký/sai buổi, thu hồi khi đóng hoặc mở lại, quyền điền phiếu hết hạn, thống kê riêng từng buổi, đăng nhập không tạo điểm danh và hiển thị từng bước. Không gọi API AI thật.

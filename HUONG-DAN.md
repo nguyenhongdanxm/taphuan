@@ -2,14 +2,16 @@
 
 ## Dành cho học viên
 
-1. Mở website và chọn **Kiểm diện**, hoặc quét mã QR để mở popup trên điện thoại.
-2. Chọn đúng trường. Nếu trường có một người, tên và chức vụ tự điền. Nếu trường có nhiều người, chọn đúng tên mình.
-3. Nếu chưa có tên, chọn **Bổ sung người chưa có tên**; nếu trường chưa có người hoặc người chưa có chức vụ, nhập phần còn thiếu. Nếu chưa có trường, chọn **Trường khác / Bổ sung trường**.
-4. Nhập số điện thoại 10 chữ số bắt đầu bằng 0 (cũng nhận +84), bấm **Điểm danh**. Website tự vào tài khoản và lưu thông tin bổ sung cho lần sau.
-5. Vào **Khảo sát**, trả lời đủ 15 câu và bấm **Gửi toàn bộ 15 câu**. Mỗi tài khoản có một phiếu; được sửa khi quản trị còn mở nhận.
-6. Vào **Nội dung tập huấn** để đọc chuyên đề, thực hành và sao chép câu lệnh. Mục **Công cụ** có liên kết và các mẫu câu lệnh.
+1. Khi quản trị mở điểm danh, quét mã QR đang hiển thị trực tiếp. Mã thay đổi mỗi 20 giây; mã cũ không mở được phiếu. Nếu báo hết hạn, quét lại mã mới.
+2. Popup ban đầu **chỉ có danh sách chọn trường**. Chọn đúng trường để hiện tên và chức vụ. Nếu trường có nhiều người, chọn tên mình.
+3. Nếu chưa có tên/chức vụ, ô mời nhập phần thiếu sẽ xuất hiện. Thông tin bổ sung được lưu để lần sau tự hiện.
+4. Khi đã có đủ tên và chức vụ, ô **Mời nhập số điện thoại** và nút **Điểm danh** mới xuất hiện. Số điện thoại là tài khoản đăng nhập cho lần sau. Có thể nhập số 10 chữ số bắt đầu bằng 0 hoặc +84.
+5. Bấm **Điểm danh** để ghi nhận có mặt cho đúng buổi và tự vào tài khoản. Lần đầu có thông báo mật khẩu ban đầu; lưu lại để đăng nhập lần sau. Cùng một tài khoản điểm danh lại không tạo thêm người trong buổi.
+6. Vào **Khảo sát** để gửi/cập nhật bộ 15 câu khi còn mở; vào **Nội dung tập huấn** và **Công cụ** để học và thực hành.
 
-Điểm danh lại: sử dụng đúng trường, tên và số điện thoại đã đăng ký để vào lại cùng tài khoản. Nếu có thông tin sai hoặc thay số điện thoại, nhờ quản trị hỗ trợ; không tạo một người khác để thay tài khoản cũ. Khi dùng chung thiết bị, bấm tên ở góc trên → Đổi người / Đăng xuất.
+Sau khi quét hợp lệ, thầy/cô có 10 phút để điền popup. Không cần quét lại chỉ vì QR ngoài màn hình đã đổi. Nếu quá thời gian hoặc quản trị đã kết thúc buổi, quét mã mới của buổi đang mở.
+
+Buổi tiếp theo vẫn cần quét QR mới để điểm danh, kể cả đang đăng nhập. Đăng nhập tài khoản bằng số điện thoại và mật khẩu chỉ để vào học, không tự ghi nhận có mặt. Mật khẩu ban đầu là tên gọi không dấu viết thường + 3 số cuối điện thoại. Khi dùng chung thiết bị, bấm tên → Đổi người / Đăng xuất. Nếu thay số điện thoại, nhờ quản trị hỗ trợ thay vì tạo tài khoản khác.
 
 ## Dành cho quản trị
 
@@ -19,11 +21,17 @@ Mở `control.html` hoặc dùng nút **Quản trị** trên cổng. Lần đầ
 
 Bấm **Sửa thông tin** để đổi lời chào, tên chương trình, giới thiệu ngắn, báo cáo viên, đơn vị tổ chức, thời gian, địa điểm, nội dung giới thiệu và thông báo. Lưu xong các thiết bị nhận thông tin mới khi đồng bộ.
 
-### Kiểm diện
+### Kiểm diện theo buổi
 
-Mã QR dùng địa chỉ website đang mở, dẫn tới `index.html?checkin=1`. Chia sẻ bằng **Sao chép liên kết**. Danh sách quản trị hiển thị người đã điểm danh, chức vụ, trường, số điện thoại và trạng thái khảo sát. Có bộ lọc và xuất CSV.
+1. Vào **Kiểm diện** → **Tạo buổi tập huấn**; nhập tên (ví dụ Buổi 1 – Sáng 28/10) và ngày → **Tạo buổi & mở QR**.
+2. QR hiện ngay trong mục Kiểm diện, tự đổi sau mỗi 20 giây và có đồng hồ đếm ngược. Có thể **Phóng to QR** ngay trên trang.
+3. Học viên quét và hoàn tất popup. Danh sách đã điểm danh cập nhật khi đồng bộ. Mỗi buổi có tổng dự kiến, đã/chưa điểm danh, thời điểm và CSV riêng.
+4. Bấm **Kết thúc điểm danh** để đóng buổi, thu hồi QR và các popup chưa gửi. **Mở lại điểm danh** giữ số liệu nhưng cấp mã mới; mã/phiếu chưa gửi từ lượt mở trước không dùng được.
+5. Dùng danh sách chọn buổi để xem lại lịch sử. Tạo/mở buổi khác tự đóng buổi đang mở.
 
-Nếu đã vào tài khoản trên thiết bị, quét QR không tạo người mới; bấm tên để xem tài khoản hoặc đổi người.
+Danh sách dự kiến được chụp khi tạo buổi, gồm những người đã có tên trong danh sách lớp. Người tự bổ sung chỉ được thêm vào buổi họ điểm danh, không làm đổi danh sách dự kiến các buổi cũ. Tài khoản cũ không tự được tính có mặt trong buổi mới.
+
+Không dùng liên kết QR cố định. Mã có chữ ký và hết hạn được kiểm tra tại máy chủ. Mã ngắn hạn giảm việc gửi liên kết dùng lâu; người khác vẫn có thể chuyển tiếp mã ngay khi còn hạn, vì vậy báo cáo viên vẫn cần kiểm tra hiện diện khi cần.
 
 ### Khảo sát
 

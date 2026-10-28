@@ -13,6 +13,7 @@ require_once __DIR__ . '/studio.php';
 require_once __DIR__ . '/ai.php';
 require_once __DIR__ . '/survey.php';
 require_once __DIR__ . '/portal.php';
+require_once __DIR__ . '/attendance.php';
 $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 ini_set('session.use_strict_mode', '1');
 session_name('AIWORKSHOP');
@@ -41,6 +42,7 @@ function with_state($callback, $write) {
   studio_defaults($state);
   survey_defaults($state);
   portal_defaults($state);
+  attendance_defaults($state);
   $result=call_user_func_array($callback,array(&$state));
   if ($write) {
    $state['version']++;

@@ -34,17 +34,19 @@ function portal_sort($items){$out=array_values($items);usort($out,function($a,$b
 function portal_state($st,$is_admin){
  $p=$st['portal'];$pid=isset($_SESSION['participant'])?$_SESSION['participant']:'';$topics=array();foreach(portal_sort($p['topics']) as $t)if($is_admin||$t['published'])$topics[]=$t;
  $people=array();$count=0;foreach($st['participants'] as $id=>$person){if(empty($person['phone']))continue;$count++;if($is_admin){$person=clean_person($person);$person['id']=$id;$person['answered']=isset($st['survey']['responses'][$id]);$people[]=$person;}}
- return array('event'=>$p['event'],'event_revision'=>$p['revision'],'topics'=>$topics,'tools'=>array_values($p['tools']),'directory'=>portal_directory($st),'people'=>$people,'checked_in_count'=>$count,'survey'=>survey_summary($st,$is_admin),'ai'=>$is_admin?ai_meta():null,'me'=>isset($st['participants'][$pid])?clean_person($st['participants'][$pid]):null,'admin'=>$is_admin,'initialized'=>!empty($st['password_hash']),'csrf'=>$_SESSION['csrf'],'version'=>$st['version']);
+ return array('event'=>$p['event'],'event_revision'=>$p['revision'],'topics'=>$topics,'tools'=>array_values($p['tools']),'directory'=>portal_directory($st),'people'=>$people,'checked_in_count'=>$count,'survey'=>survey_summary($st,$is_admin),'ai'=>$is_admin?ai_meta():null,'me'=>isset($st['participants'][$pid])?clean_person($st['participants'][$pid]):null,'admin'=>$is_admin,'initialized'=>!empty($st['password_hash']),'csrf'=>$_SESSION['csrf'],'attendance'=>attendance_summary($st,$is_admin),'version'=>$st['version']);
 }
 function portal_field($input,$name,$max){return cut(isset($input[$name])?$input[$name]:'',$max);}
 function portal_revision($input,$current){if(!isset($input['revision'])||(int)$input['revision']!==(int)$current)fail('Nội dung đã thay đổi ở phiên khác. Đóng biểu mẫu, tải lại và sửa bản mới.',409);}
 function portal_actions($action,$input,$is_admin){
  global $config;
  if($action==='portal_state')return with_state(function(&$st)use($is_admin){return portal_state($st,$is_admin);},false);
+ if($action==='portal_scan'||strpos($action,'portal_attendance_')===0)return attendance_actions($action,$input);
  if($action==='portal_checkin'){
   $school=portal_field($input,'school',180);$name=portal_field($input,'name',100);$role=portal_field($input,'role',100);$phone=phone_number(isset($input['phone'])?$input['phone']:'');
   if($school===''||$name===''||$role==='')fail('Chọn trường và bổ sung đủ họ tên, chức vụ.',400);
-  return with_state(function(&$st)use($school,$name,$role,$phone,$config){
+  return with_state(function(&$st)use($school,$name,$role,$phone,$config,$input){
+   $grant=attendance_need_grant($st);if(portal_field($input,'session',100)!==$grant['session'])fail('Buổi điểm danh đã thay đổi. Quét lại mã QR của đúng buổi.',409);
    $pid=null;$same=null;foreach($st['participants'] as $id=>$p){
     if(!empty($p['phone'])&&$p['phone']===$phone){if($p['school']!==$school||$p['name']!==$name)fail('Số điện thoại đã gắn với thông tin khác. Kiểm tra lại hoặc nhờ quản trị hỗ trợ.',409);$pid=$id;}
     if($p['school']===$school&&$p['name']===$name&&!empty($p['phone'])&&$p['phone']!==$phone)$same=$id;
@@ -52,7 +54,8 @@ function portal_actions($action,$input,$is_admin){
    if($pid===null&&$same!==null)fail('Thầy/cô đã điểm danh bằng số điện thoại khác. Dùng số đã đăng ký hoặc nhờ quản trị hỗ trợ.',409);
    $new=$pid===null;if($new){if(count(array_filter($st['participants'],function($p){return !empty($p['phone']);}))>=$config['max_participants'])fail('Lớp đã đạt giới hạn đăng ký.',409);$pid=token();$st['participants'][$pid]=array('name'=>$name,'school'=>$school,'role'=>$role,'phone'=>$phone,'password_hash'=>password_hash(initial_student_password($name,$phone),PASSWORD_DEFAULT),'joined'=>gmdate('c'));}
    $st['participants'][$pid]['role']=$role;$st['participants'][$pid]['last_checkin']=gmdate('c');portal_remember($st,$school,$name,$role);
-   $_SESSION['participant']=$pid;session_regenerate_id(true);audit($st,'Điểm danh tại cổng tập huấn.');return array('ok'=>true,'created'=>$new);
+   attendance_record($st,$pid,$grant);
+   $_SESSION['participant']=$pid;session_regenerate_id(true);audit($st,'Điểm danh theo buổi: '.$grant['title']);return array('ok'=>true,'created'=>$new,'session'=>$grant['session'],'initial_password'=>$new?initial_student_password($name,$phone):null);
   },true);
  }
  need_admin();

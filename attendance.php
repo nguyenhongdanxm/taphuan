@@ -17,6 +17,13 @@ function attendance_actions($action,$input){
  return with_state(function(&$st)use($action,$input){$sessions=&$st['attendance']['sessions'];
   if($action==='portal_attendance_create'){$title=portal_field($input,'title',160);$date=portal_field($input,'date',10);if($title==='')fail('Nhập tên buổi tập huấn.',400);if(!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/',$date,$m)||!checkdate((int)$m[2],(int)$m[3],(int)$m[1]))fail('Chọn ngày tập huấn hợp lệ.',400);if(count($sessions)>=100)fail('Đã đạt giới hạn 100 buổi.',409);foreach($sessions as &$s){$s['open']=false;$s['revision']=(isset($s['revision'])?$s['revision']:1)+1;}unset($s);$id='attendance-'.substr(token(),0,16);$sessions[$id]=array('id'=>$id,'title'=>$title,'date'=>$date,'open'=>true,'revision'=>1,'nonce'=>token(),'expected'=>attendance_expected($st),'records'=>array(),'created'=>gmdate('c'));audit($st,'Tạo buổi điểm danh: '.$title);return array('ok'=>true,'id'=>$id);}
   if($action==='portal_attendance_control'){$id=portal_field($input,'session',100);if(!isset($sessions[$id]))fail('Không có buổi điểm danh này.',404);$op=portal_field($input,'op',10);if(!in_array($op,array('open','close'),true))fail('Thao tác không hợp lệ.',400);if($op==='open'){foreach($sessions as &$s){$s['open']=false;$s['revision']=(isset($s['revision'])?$s['revision']:1)+1;}unset($s);}$sessions[$id]['open']=$op==='open';$sessions[$id]['nonce']=token();$sessions[$id]['revision']=(isset($sessions[$id]['revision'])?$sessions[$id]['revision']:1)+1;audit($st,'Buổi điểm danh: '.$op.' '.$sessions[$id]['title']);return array('ok'=>true);}
+  if($action==='portal_attendance_reset'||$action==='portal_attendance_delete'){
+   $id=portal_field($input,'session',100);if(!isset($sessions[$id]))fail('Buổi đã bị xóa. Tải lại danh sách.',409);$s=&$sessions[$id];
+   if(portal_field($input,'confirm',160)!==$s['title'])fail('Gõ đúng tên buổi để xác nhận.',400);
+   if(!isset($input['revision'],$input['records_count'])||(int)$input['revision']!==$s['revision']||(int)$input['records_count']!==count($s['records']))fail('Dữ liệu buổi vừa thay đổi. Đóng xác nhận, tải lại rồi kiểm tra trước khi thực hiện.',409);
+   $title=$s['title'];if($action==='portal_attendance_delete'){unset($s);unset($sessions[$id]);}else{$s['records']=array();$s['open']=false;$s['nonce']=token();$s['revision']++;unset($s);}
+   audit($st,($action==='portal_attendance_delete'?'Xóa buổi: ':'Reset điểm danh: ').$title);return array('ok'=>true);
+  }
   fail('Thao tác không hợp lệ.',404);
  },true);
 }

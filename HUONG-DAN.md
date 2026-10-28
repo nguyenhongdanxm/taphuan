@@ -64,3 +64,10 @@ Chọn nhà cung cấp, nhập khóa và model (`auto` để tự chọn), bấm
 ## Cập nhật và bảo toàn dữ liệu
 
 Xem [README.md](README.md) để cài đặt, deploy cPanel và chạy kiểm thử. Sao lưu cấu hình và hai thư mục dữ liệu/tệp tải lên trước khi nâng cấp. Không chép dữ liệu học viên hoặc khóa API lên GitHub. `screen.html` chỉ chuyển về cổng, không còn màn chiếu riêng.
+
+## Reset/xóa điểm danh và thống kê mở rộng
+
+- **Kiểm diện → chọn buổi → Xuất CSV trước nếu cần → Reset điểm danh buổi / Xóa buổi → gõ đúng tên buổi → xác nhận.** Reset giữ buổi để dùng lại, xóa buổi bỏ toàn bộ buổi được chọn. Tài khoản, phiếu khảo sát và các buổi khác được giữ nguyên. Buổi reset sẽ đóng; mở lại để tạo QR mới.
+- **Khảo sát → Bức tranh khảo sát:** chọn buổi (nhóm người có mặt), trường hoặc chức vụ rồi Áp dụng. Đọc mẫu số, tỷ lệ hoàn thành, thuận lợi/điểm nghẽn/nhu cầu, tiến độ nhóm, ngày cập nhật phiếu và 15 biểu đồ. Bỏ bộ lọc để xem toàn đợt; Xuất thống kê đang xem CSV để lấy dữ liệu đúng phạm vi. Danh sách tài khoản phía dưới vẫn là danh sách toàn đợt.
+- **Mode:** phương án được chọn nhiều nhất; các phương án cùng số lượt được ghi đồng hạng. Câu tự luận không tính mode.
+- **Model AI:** bảng thông tin phân biệt model cấu hình với model thực tế của báo cáo, có thời điểm và mẫu phân tích. Cảnh báo dữ liệu đã đổi thì phân tích lại trước khi dùng kết luận. AI phân tích toàn đợt, không phải nhóm lọc. TXT và Sao chép báo cáo có kèm thông tin model.

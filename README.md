@@ -66,3 +66,11 @@ PHP_BIN=/path/to/php node tests/integration.cjs
 ```
 
 Kiểm thử API tự tạo bản sao và dữ liệu giả trong thư mục tạm, không đọc/ghi cấu hình thật. Phạm vi: nâng cấp dữ liệu cũ, điểm danh mới/lại, chống trùng số điện thoại, lưu danh sách, gửi/cập nhật khảo sát theo tài khoản, quyền truy cập, CRUD và xung đột phiên bản. Kiểm thử kết xuất: năm mục, biểu mẫu 15 câu, thống kê, escape nội dung/liên kết và các trường hợp tự điền theo trường. Bổ sung kiểm thử chu kỳ QR đúng 20 giây, mã hết hạn/sai chữ ký/sai buổi, thu hồi khi đóng hoặc mở lại, quyền điền phiếu hết hạn, thống kê riêng từng buổi, đăng nhập không tạo điểm danh và hiển thị từng bước. Không gọi API AI thật.
+
+## Quản lý lại điểm danh và thống kê khảo sát (v11)
+
+Trong Kiểm diện, chọn đúng buổi rồi dùng **Reset điểm danh buổi** hoặc **Xóa buổi**. Reset xóa các lượt ghi nhận, giữ tên/ngày và danh sách dự kiến; xóa buổi bỏ cả buổi đó. Cả hai cần gõ đúng tên buổi, đóng/thu hồi mã QR cũ và giữ nguyên tài khoản, phiếu khảo sát, các buổi khác. Nếu dữ liệu thay đổi sau khi mở xác nhận, máy chủ từ chối để người quản trị kiểm tra lại. Nên xuất CSV trước; không có nút hoàn tác. Chỉ quản trị được thực hiện.
+
+Khảo sát có bảng tổng quan và bộ lọc theo nhóm người đã điểm danh một buổi, trường, chức vụ; biểu đồ vòng tiến độ; biểu đồ thuận lợi, điểm nghẽn, nhu cầu; tỷ lệ gửi theo trường/chức vụ; phân bố phiếu theo ngày cập nhật cuối; 15 biểu đồ câu hỏi theo phạm vi và xuất CSV. Lọc buổi không tạo khảo sát riêng cho từng buổi: dùng phiếu toàn đợt của những người có mặt trong buổi đã chọn. Nhóm chưa có người/phiếu hiển thị 0, không suy ra mức độ hoặc xếp loại trường. Mỗi câu ghi mẫu số; câu chọn nhiều có thể cộng vượt 100%. Mode hiển thị đầy đủ các phương án đồng hạng có tần suất cao nhất, không coi là đáp án đúng.
+
+Báo cáo hiển thị provider/model thực tế đã dùng, thời điểm hoàn tất, quy mô mẫu và cảnh báo khi dữ liệu thay đổi; tách biệt với cấu hình model hiện tại (auto chỉ là lựa chọn tự động). Thông tin này đi kèm bản TXT và nội dung sao chép. Báo cáo AI là toàn đợt, không thay đổi theo bộ lọc biểu đồ. Học viên chỉ xem metadata của báo cáo đã được công bố; các bảng phân nhóm chi tiết chỉ dành cho quản trị. Không cần khóa AI để tính biểu đồ. Đường dẫn tài nguyên đổi sang v11 để tải giao diện mới.

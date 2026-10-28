@@ -41,6 +41,7 @@ function portal_revision($input,$current){if(!isset($input['revision'])||(int)$i
 function portal_actions($action,$input,$is_admin){
  global $config;
  if($action==='portal_state')return with_state(function(&$st)use($is_admin){return portal_state($st,$is_admin);},false);
+ if($action==='portal_survey_dashboard'){need_admin();return with_state(function(&$st)use($input){return survey_dashboard($st,$input);},false);}
  if($action==='portal_scan'||strpos($action,'portal_attendance_')===0)return attendance_actions($action,$input);
  if($action==='portal_checkin'){
   $school=portal_field($input,'school',180);$name=portal_field($input,'name',100);$role=portal_field($input,'role',100);$phone=phone_number(isset($input['phone'])?$input['phone']:'');

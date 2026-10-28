@@ -236,6 +236,8 @@ function survey_actions($action,$input){
  if($op==='open'){$s['status']='open';$s['published']=false;$s['report_published']=false;$s['analysis']=array('status'=>'idle');}
  elseif($op==='close'){if($s['status']==='open'){$s['status']='closed';$s['published']=true;survey_queue($st);}}
  elseif($op==='retry'){if($s['status']!=='closed'||!count($s['responses']))fail('Đóng khảo sát có phản hồi trước khi phân tích.',409);if($s['analysis']['status']==='running'&&time()-$s['analysis']['started']<120)fail('AI đang xử lý. Đợi hoàn tất.',409);survey_queue($st);}
+ elseif($op==='publish'){$s['published']=!empty($input['value']);}
+ elseif($op==='publish_report'){if(empty($s['analysis']['report']))fail('Chưa có báo cáo AI.',409);$s['report_published']=!empty($input['value']);}
  elseif($op==='show'){$page=isset($input['page'])?$input['page']:'intro';if(!in_array($page,array('intro','question','results','report'),true))fail('Trang chiếu không hợp lệ.',400);$index=isset($input['index'])?max(0,min(14,(int)$input['index'])):0;$slide=isset($input['slide'])?max(0,min(30,(int)$input['slide'])):0;if($page==='results')$s['published']=true;if($page==='report'){if($s['analysis']['status']!=='ready'||!isset($s['analysis']['report']))fail('Chưa có báo cáo AI hoàn chỉnh.',409);$s['report_published']=true;}$st['studio']['stage']=array('kind'=>'survey','page'=>$page,'index'=>$index,'slide'=>$slide,'item'=>null,'playing'=>false,'sound'=>false,'media_version'=>time());}
  else fail('Thao tác khảo sát không hợp lệ.',400);audit($st,'Bộ khảo sát thực trạng: '.$op);return array('ok'=>true);
  },true);
@@ -246,3 +248,4 @@ function survey_analyze($input){$job=with_state(function(&$st){$s=&$st['survey']
  return with_state(function(&$st)use($job,$report,$secret){$a=&$st['survey']['analysis'];if(!isset($a['ticket'])||$a['ticket']!==$job['ticket']||$st['survey']['status']!=='closed')return array('ok'=>false,'stale'=>true);if(survey_snapshot($st)!==$job['hash']){survey_queue($st);return array('ok'=>false,'stale'=>true);}$a['status']='ready';$a['report']=$report;$a['finished']=gmdate('c');$a['provider']=$secret['provider'];$a['model']=isset($GLOBALS['ai_effective_model'])?$GLOBALS['ai_effective_model']:$secret['model'];unset($a['ticket']);audit($st,'AI hoàn tất phân tích bộ khảo sát 15 câu.');return array('ok'=>true);},true);
  }catch(Exception $e){return with_state(function(&$st)use($job,$e){$a=&$st['survey']['analysis'];if(isset($a['ticket'])&&$a['ticket']===$job['ticket']){$a['status']='error';$a['error']=cut($e->getMessage(),500);unset($a['ticket']);}return array('ok'=>false,'error'=>$e->getMessage());},true);}
 }
+

@@ -105,3 +105,9 @@ Danh sách biên tập lưu cùng dữ liệu hosting, không sửa file seed m�
 - Khi nâng cấp, các mục đã được ẩn/xoá theo v16–17 được tự xoá vĩnh viễn ở lần truy cập đầu. Bản sao `previous.php` do ứng dụng quản lý cũng được ghi lại bằng dữ liệu sau xoá. Bản sao lưu bên ngoài ứng dụng/hosting không do mã nguồn này quản lý.
 - Excel `.xlsx` tối đa 200 dòng / 2 MB. Dùng các cột Trường, Họ và tên, Chức vụ, Số điện thoại; có thể thiếu cột hoặc để trống ô, đổi thứ tự cột. Mỗi dòng chỉ cần một thông tin; dòng trống bỏ qua. Dòng chỉ có tên trường tạo trường rỗng. Hồ sơ thiếu thông tin được lưu để quản trị bổ sung sau, không tạo tài khoản cho đến khi đủ cả bốn mục. Số điện thoại nếu nhập cần hợp lệ.
 - Có mẫu riêng cho danh sách người và tên trường. Xem trước số tài khoản mới, hồ sơ chờ bổ sung, trường mới và mục bỏ qua rồi xác nhận. Trùng dữ liệu/điện thoại hoặc xung đột dữ liệu sẽ báo lỗi trước khi lưu. Không tự ghi nhận điểm danh.
+
+
+### Câu khảo sát tài khoản AI v19
+Bổ sung câu 16: “Thầy cô đang dùng tài khoản AI nào sau đây?” gồm 18 gói theo ChatGPT, Google Gemini, Claude, Microsoft Copilot, Perplexity AI, Grok và lựa chọn riêng “Chưa dùng chat AI nào”. Cho chọn nhiều gói, không áp dụng giới hạn 3 của các câu cũ; lựa chọn chưa dùng loại trừ các gói còn lại.
+
+Phiếu cũ 15 câu giữ nguyên, không tự điền câu 16. Học viên có thể bổ sung khi quản trị mở nhận. Thống kê, biểu đồ và CSV câu mới chỉ tính trên người đã trả lời câu đó; không diễn giải phiếu thiếu thành “chưa dùng”. AI nhận câu hỏi và số liệu mới; báo cáo đã tạo trước đó được đánh dấu cũ nếu khác dữ liệu hiện tại. Tên gói giữ theo danh mục yêu cầu của đợt tập huấn.

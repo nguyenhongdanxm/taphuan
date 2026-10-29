@@ -90,3 +90,11 @@ Tài khoản cá nhân chỉ nhận thống kê, tiến độ và nhận định
 Quản trị xem đầy đủ số đã/chưa trả lời, tổng kết toàn đợt, biểu đồ, bộ lọc và báo cáo AI. Phần nhận định tự động mô tả tỷ lệ tham gia, lựa chọn nổi bật về thuận lợi/điểm nghẽn/nhu cầu (giữ đồng hạng) và hướng sử dụng kết quả; có mẫu số, không chấm điểm hoặc xếp loại trường. Nhận định này tính trực tiếp từ số liệu, tách khỏi báo cáo diễn giải AI. Nhóm chưa có phiếu không sinh nhận định nội dung.
 
 Các đáp án dùng khoảng cách 4px, dòng 1.35 và phần đệm gọn; điện thoại vẫn giữ vùng chạm tối thiểu 44px. Biểu đồ có màu phân biệt thuận lợi, điểm nghẽn, nhu cầu; nhãn tỷ lệ và số lượng rõ ràng, thẻ nhận định dễ đọc. Dùng tài nguyên v14 sau khi deploy.
+
+## Quản lý danh sách tập huấn (v15)
+
+Quản trị → **Danh sách tập huấn** (hoặc Kiểm diện → Quản lý danh sách). Có tìm kiếm không dấu theo tên/trường/chức vụ/số điện thoại, lọc trường, thêm/sửa người, thêm/đổi tên trường và xuất CSV cả người chưa điểm danh. Người chưa biết chức vụ/số điện thoại có thể để trống để bổ sung khi quét QR. Trường trống vẫn xuất hiện trong danh sách chọn trường.
+
+Nếu nhập số điện thoại và chức vụ cho người chưa có tài khoản, hệ thống tạo tài khoản và hiển thị mật khẩu ban đầu cho quản trị; việc này không ghi nhận có mặt. Sửa người đã có tài khoản giữ nguyên ID, mật khẩu và liên kết phiếu khảo sát. Đổi số điện thoại đổi tên đăng nhập, không đổi mật khẩu. Đổi trường đổi phạm vi thống kê mà tài khoản được xem. Lịch sử điểm danh/snapshot danh sách dự kiến của các buổi đã tạo giữ nguyên; buổi tạo mới dùng danh sách đã chỉnh. Không tự gộp các trường/người trùng, không nhận số điện thoại thuộc tài khoản khác, từ chối bản sửa đã cũ khi có cập nhật đồng thời.
+
+Danh sách biên tập lưu cùng dữ liệu hosting, không sửa file seed mỗi lần và không bị deploy ghi đè. Chỉ quản trị nhận dữ liệu số điện thoại/tài khoản trong mục này; danh sách chọn trường công khai vẫn chỉ có tên trường, họ tên, chức vụ. `roster.php` được bảo vệ và thêm vào deploy; giao diện dùng v15.

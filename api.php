@@ -14,6 +14,7 @@ require_once __DIR__ . '/ai.php';
 require_once __DIR__ . '/survey.php';
 require_once __DIR__ . '/portal.php';
 require_once __DIR__ . '/attendance.php';
+require_once __DIR__ . '/roster.php';
 $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 ini_set('session.use_strict_mode', '1');
 session_name('AIWORKSHOP');

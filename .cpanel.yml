@@ -2,7 +2,7 @@
 deployment:
   tasks:
     - /bin/mkdir -p /home/capnachi/noitruxinman.edu.vn/taphuan
-    - /bin/cp index.html control.html screen.html api.php studio.php ai.php survey.php portal.php attendance.php roster-seed.php course.php config.example.php sample-data.csv .htaccess /home/capnachi/noitruxinman.edu.vn/taphuan/
+    - /bin/cp index.html control.html screen.html api.php studio.php ai.php survey.php portal.php attendance.php roster.php roster-seed.php course.php config.example.php sample-data.csv .htaccess /home/capnachi/noitruxinman.edu.vn/taphuan/
     - /bin/cp -R assets /home/capnachi/noitruxinman.edu.vn/taphuan/
     - 'if [ ! -f /home/capnachi/noitruxinman.edu.vn/taphuan/config.php ]; then /bin/cp config.example.php /home/capnachi/noitruxinman.edu.vn/taphuan/config.php; fi'
 

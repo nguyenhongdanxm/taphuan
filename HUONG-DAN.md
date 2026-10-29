@@ -83,3 +83,12 @@ Xem [README.md](README.md) để cài đặt, deploy cPanel và chạy kiểm th
 - **Cá nhân:** khi thống kê được công bố, chỉ xem số người trả lời, biểu đồ và nhận định thuộc trường đã đăng ký. Không xem báo cáo AI tổng hợp hoặc dữ liệu các trường khác.
 - **Quản trị:** xem toàn đợt, tổng số đã/chưa trả lời, nhận định tự động, biểu đồ, bộ lọc và báo cáo AI. Nút Công bố thống kê trường chỉ mở quyền xem đúng phạm vi trường cho mỗi học viên.
 - **Nhận định tự động** có số lượng/mẫu số và giới hạn dữ liệu; không phải xếp loại trường hoặc kết luận thẩm định. Báo cáo AI toàn đợt được quản trị xem và kiểm chứng riêng.
+
+## Điều chỉnh danh sách tập huấn v15
+
+1. Đăng nhập **Quản trị → Danh sách tập huấn**; dùng tìm kiếm hoặc lọc theo trường.
+2. **Thêm người / Sửa:** chọn hoặc gõ tên trường, họ tên, chức vụ, số điện thoại rồi Lưu danh sách. Người chưa có tài khoản được phép để trống chức vụ/số điện thoại. Nếu điền đủ số điện thoại và chức vụ, hệ thống tạo tài khoản (chưa tính điểm danh).
+3. **Thêm trường:** tạo tên trường trước khi biết tên người. Mở phần **Quản lý tên trường / đơn vị** để đổi tên trường cho danh sách và các tài khoản hiện thuộc trường đó.
+4. **Xuất danh sách CSV:** xuất danh sách dự kiến và người đã có tài khoản, gồm cả trường chưa có người.
+
+Sửa hồ sơ giữ ID và các phiếu khảo sát. Đổi số điện thoại đổi tên đăng nhập nhưng giữ mật khẩu hiện tại. Chuyển trường sẽ đổi phạm vi thống kê trường mà tài khoản được xem. Danh sách dự kiến/lượt điểm danh các buổi cũ không bị viết lại; nếu cần sửa một bản ghi lịch sử, vào Kiểm diện → đúng buổi → Sửa lượt điểm danh.

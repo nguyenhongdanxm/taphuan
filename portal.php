@@ -34,13 +34,14 @@ function portal_sort($items){$out=array_values($items);usort($out,function($a,$b
 function portal_state($st,$is_admin){
  $p=$st['portal'];$pid=isset($_SESSION['participant'])?$_SESSION['participant']:'';$topics=array();foreach(portal_sort($p['topics']) as $t)if($is_admin||$t['published'])$topics[]=$t;
  $people=array();$count=0;foreach($st['participants'] as $id=>$person){if(empty($person['phone']))continue;$count++;if($is_admin){$person=clean_person($person);$person['id']=$id;$person['answered']=isset($st['survey']['responses'][$id]);$people[]=$person;}}
- return array('event'=>$p['event'],'event_revision'=>$p['revision'],'topics'=>$topics,'tools'=>array_values($p['tools']),'directory'=>portal_directory($st),'people'=>$people,'checked_in_count'=>$count,'survey'=>survey_summary($st,$is_admin),'ai'=>$is_admin?ai_meta():null,'me'=>isset($st['participants'][$pid])?clean_person($st['participants'][$pid]):null,'admin'=>$is_admin,'initialized'=>!empty($st['password_hash']),'csrf'=>$_SESSION['csrf'],'attendance'=>attendance_summary($st,$is_admin),'version'=>$st['version']);
+ return array('event'=>$p['event'],'event_revision'=>$p['revision'],'topics'=>$topics,'tools'=>array_values($p['tools']),'directory'=>portal_directory($st),'people'=>$people,'roster'=>$is_admin?roster_summary($st):null,'checked_in_count'=>$count,'survey'=>survey_summary($st,$is_admin),'ai'=>$is_admin?ai_meta():null,'me'=>isset($st['participants'][$pid])?clean_person($st['participants'][$pid]):null,'admin'=>$is_admin,'initialized'=>!empty($st['password_hash']),'csrf'=>$_SESSION['csrf'],'attendance'=>attendance_summary($st,$is_admin),'version'=>$st['version']);
 }
 function portal_field($input,$name,$max){return cut(isset($input[$name])?$input[$name]:'',$max);}
 function portal_revision($input,$current){if(!isset($input['revision'])||(int)$input['revision']!==(int)$current)fail('Nội dung đã thay đổi ở phiên khác. Đóng biểu mẫu, tải lại và sửa bản mới.',409);}
 function portal_actions($action,$input,$is_admin){
  global $config;
  if($action==='portal_state')return with_state(function(&$st)use($is_admin){return portal_state($st,$is_admin);},false);
+ if(strpos($action,'portal_roster_')===0)return roster_actions($action,$input);
  if($action==='portal_survey_dashboard'){need_admin();return with_state(function(&$st)use($input){return survey_dashboard($st,$input);},false);}
  if($action==='portal_scan'||strpos($action,'portal_attendance_')===0)return attendance_actions($action,$input);
  if($action==='portal_checkin'){

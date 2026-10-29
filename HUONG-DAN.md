@@ -71,3 +71,9 @@ Xem [README.md](README.md) để cài đặt, deploy cPanel và chạy kiểm th
 - **Khảo sát → Bức tranh khảo sát:** chọn buổi (nhóm người có mặt), trường hoặc chức vụ rồi Áp dụng. Đọc mẫu số, tỷ lệ hoàn thành, thuận lợi/điểm nghẽn/nhu cầu, tiến độ nhóm, ngày cập nhật phiếu và 15 biểu đồ. Bỏ bộ lọc để xem toàn đợt; Xuất thống kê đang xem CSV để lấy dữ liệu đúng phạm vi. Danh sách tài khoản phía dưới vẫn là danh sách toàn đợt.
 - **Mode:** phương án được chọn nhiều nhất; các phương án cùng số lượt được ghi đồng hạng. Câu tự luận không tính mode.
 - **Model AI:** bảng thông tin phân biệt model cấu hình với model thực tế của báo cáo, có thời điểm và mẫu phân tích. Cảnh báo dữ liệu đã đổi thì phân tích lại trước khi dùng kết luận. AI phân tích toàn đợt, không phải nhóm lọc. TXT và Sao chép báo cáo có kèm thông tin model.
+
+## Thao tác mới v13
+
+- Reset khảo sát: vào Quản trị → Khảo sát → Reset kết quả khảo sát → gõ **RESET KHAO SAT** → xác nhận. Nếu cần lưu số liệu cũ, xuất CSV trước. Sau reset bấm Mở nhận khảo sát để thu lại. Thao tác xóa phiếu, thống kê và báo cáo AI, giữ câu hỏi, tài khoản và điểm danh.
+- Sửa/xóa từng người: Kiểm diện → chọn buổi → người đã điểm danh → Sửa / Xóa. Sửa thông tin ghi nhận chỉ áp dụng cho buổi đó; không đổi tài khoản học viên. Xóa cần gõ đúng họ tên để xác nhận.
+- Trên điện thoại, khảo sát chia bốn nhóm. Dùng Trước/Tiếp theo hoặc chạm tên nhóm, điền đủ và Gửi toàn bộ ở nhóm cuối. Nếu thiếu câu sẽ chuyển về nhóm cần bổ sung. Không đóng tab trước khi gửi thành công. Quản trị chạm tiêu đề nhóm biểu đồ/danh sách để mở hoặc thu gọn.

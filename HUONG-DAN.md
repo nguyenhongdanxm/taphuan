@@ -39,7 +39,7 @@ Không dùng liên kết QR cố định. Mã có chữ ký và hết hạn đư
 - **Kết thúc khảo sát:** dừng nhận và công bố thống kê; khởi chạy phân tích AI khi có phiếu. Có thể ẩn kết quả với học viên bằng nút tương ứng.
 - **Tiến độ theo tài khoản:** lọc tất cả / đã khảo sát / chưa khảo sát, xuất CSV danh sách.
 - **Kết quả:** biểu đồ từng câu ghi số người chọn và tỷ lệ. Câu chọn nhiều có tổng tỷ lệ vượt 100%; tỷ lệ tính theo người trả lời, không phải theo số trường.
-- **Phân tích AI:** giữ trang quản trị mở để xử lý. Chưa có khóa hoặc bị giới hạn API có thể cấu hình lại rồi bấm Phân tích bằng AI. Kiểm chứng báo cáo và dùng **Công bố báo cáo AI** nếu muốn học viên xem.
+- **Phân tích AI:** giữ trang quản trị mở để xử lý. Chưa có khóa hoặc bị giới hạn API có thể cấu hình lại rồi bấm Phân tích bằng AI. Báo cáo AI toàn đợt chỉ dành cho quản trị; học viên xem thống kê và nhận định thuộc trường mình.
 - **Xuất thống kê CSV:** kết quả tổng hợp theo từng câu, không xuất nguyên văn phần chia sẻ cá nhân.
 
 Bộ hiện có gồm câu chọn một, câu chọn nhiều 1–3 phương án và câu 15 chia sẻ thực tế. Giữ cấu trúc này để dùng được phiếu đã thu từ phiên bản trước.
@@ -77,3 +77,9 @@ Xem [README.md](README.md) để cài đặt, deploy cPanel và chạy kiểm th
 - Reset khảo sát: vào Quản trị → Khảo sát → Reset kết quả khảo sát → gõ **RESET KHAO SAT** → xác nhận. Nếu cần lưu số liệu cũ, xuất CSV trước. Sau reset bấm Mở nhận khảo sát để thu lại. Thao tác xóa phiếu, thống kê và báo cáo AI, giữ câu hỏi, tài khoản và điểm danh.
 - Sửa/xóa từng người: Kiểm diện → chọn buổi → người đã điểm danh → Sửa / Xóa. Sửa thông tin ghi nhận chỉ áp dụng cho buổi đó; không đổi tài khoản học viên. Xóa cần gõ đúng họ tên để xác nhận.
 - Trên điện thoại, khảo sát chia bốn nhóm. Dùng Trước/Tiếp theo hoặc chạm tên nhóm, điền đủ và Gửi toàn bộ ở nhóm cuối. Nếu thiếu câu sẽ chuyển về nhóm cần bổ sung. Không đóng tab trước khi gửi thành công. Quản trị chạm tiêu đề nhóm biểu đồ/danh sách để mở hoặc thu gọn.
+
+## Quyền xem khảo sát v14
+
+- **Cá nhân:** khi thống kê được công bố, chỉ xem số người trả lời, biểu đồ và nhận định thuộc trường đã đăng ký. Không xem báo cáo AI tổng hợp hoặc dữ liệu các trường khác.
+- **Quản trị:** xem toàn đợt, tổng số đã/chưa trả lời, nhận định tự động, biểu đồ, bộ lọc và báo cáo AI. Nút Công bố thống kê trường chỉ mở quyền xem đúng phạm vi trường cho mỗi học viên.
+- **Nhận định tự động** có số lượng/mẫu số và giới hạn dữ liệu; không phải xếp loại trường hoặc kết luận thẩm định. Báo cáo AI toàn đợt được quản trị xem và kiểm chứng riêng.

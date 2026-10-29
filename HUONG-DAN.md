@@ -101,3 +101,9 @@ Sửa hồ sơ giữ ID và các phiếu khảo sát. Đổi số điện thoạ
 - Nhập Excel → xem trước → xác nhận. Bắt buộc trường và họ tên. Chưa có chức vụ/số điện thoại có thể để trống. Có điện thoại phải có chức vụ, tạo tài khoản với quy tắc mật khẩu hiện tại nhưng không tự điểm danh.
 - Người đã có được bỏ qua nếu dữ liệu khớp; khác thông tin sẽ báo lỗi để sửa trực tiếp. Trùng tên cùng trường, trùng điện thoại hoặc dòng lỗi sẽ chặn toàn bộ lần nhập. Nếu dữ liệu thay đổi sau bước xem trước, phải xem trước lại.
 - Bộ đọc/ghi XLSX tích hợp, không phụ thuộc CDN; giải nén cần trình duyệt hiện đại hỗ trợ DecompressionStream (Chrome/Edge/Safari/Firefox mới).
+
+
+### Quản lý tên trường v17
+Trong Quản trị → Danh sách tập huấn → Quản lý tên trường / đơn vị: tìm trường, chọn từng trường hoặc tất cả kết quả đang hiển thị; nhấn Xoá trường đã chọn và nhập `XOA <số trường> TRUONG`. Trường và tên người thuộc trường sẽ được bỏ khỏi danh mục chọn điểm danh, giữ tài khoản đăng nhập, khảo sát và lịch sử. Thêm lại đúng tên trường hoặc nhập lại bằng Excel sẽ khôi phục danh sách đã lưu (trừ người đã được xoá riêng).
+
+Dùng **Tải mẫu tên trường** để tải `.xlsx` một cột `Trường`. Xoá dòng minh hoạ, mỗi dòng một trường, tối đa 200 trường / 2 MB; nhập trang tính đầu tiên. **Nhập Excel tên trường** có bước xem trước, đếm trường mới/khôi phục/trùng đã có, rồi xác nhận. Dòng trùng trong file hoặc tên trống sẽ chặn toàn bộ lần nhập. Không tạo tài khoản hay tự điểm danh. Dữ liệu thay đổi sau xem trước hoặc sau chọn xoá sẽ yêu cầu kiểm tra lại.

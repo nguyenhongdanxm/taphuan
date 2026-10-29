@@ -24,10 +24,10 @@ function portal_directory($st){
   foreach($units[$p['school']] as &$person)if($person['name']===$p['name']){if(empty($person['role'])&&!empty($p['role']))$person['role']=$p['role'];$found=true;break;}unset($person);
   if(!$found)$units[$p['school']][]=array('name'=>$p['name'],'role'=>isset($p['role'])?$p['role']:'');
  }
- ksort($units,SORT_NATURAL);$out=array();foreach($units as $school=>$people){$people=array_values(array_filter($people,function($p)use($st,$school){return empty($st['portal']['roster_removed'][attendance_identity($school,$p['name'])]);}));$out[]=array('school'=>$school,'people'=>$people);}return $out;
+ ksort($units,SORT_NATURAL);$out=array();foreach($units as $school=>$people){if(!empty($st['portal']['schools_removed'][$school]))continue;$people=array_values(array_filter($people,function($p)use($st,$school){return empty($st['portal']['roster_removed'][attendance_identity($school,$p['name'])]);}));$out[]=array('school'=>$school,'people'=>$people);}return $out;
 }
 function portal_remember(&$st,$school,$name,$role){
- unset($st['portal']['roster_removed'][attendance_identity($school,$name)]);
+ unset($st['portal']['roster_removed'][attendance_identity($school,$name)],$st['portal']['schools_removed'][$school]);
  foreach($st['portal']['directory'] as &$u)if($u['school']===$school){foreach($u['people'] as &$p)if($p['name']===$name){$p['role']=$role;return;}$u['people'][]=array('name'=>$name,'role'=>$role);return;}
  unset($u);$st['portal']['directory'][]=array('school'=>$school,'people'=>array(array('name'=>$name,'role'=>$role)));
 }

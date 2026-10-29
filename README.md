@@ -100,16 +100,8 @@ Nếu nhập số điện thoại và chức vụ cho người chưa có tài kh
 Danh sách biên tập lưu cùng dữ liệu hosting, không sửa file seed mỗi lần và không bị deploy ghi đè. Chỉ quản trị nhận dữ liệu số điện thoại/tài khoản trong mục này; danh sách chọn trường công khai vẫn chỉ có tên trường, họ tên, chức vụ. `roster.php` được bảo vệ và thêm vào deploy; giao diện dùng v15.
 
 
-### Danh sách tập huấn v16
-- Chọn từng người hoặc chọn tất cả người đang hiển thị sau khi tìm/lọc. Có thể tiếp tục chọn ở trường khác; bộ đếm là tổng đã chọn. Nhấn Xoá người đã chọn, xem tên và nhập `XOA <số người>` để xác nhận.
-- Xoá chỉ bỏ tên khỏi danh sách chọn điểm danh. Tài khoản, quyền đăng nhập, số liệu khảo sát và lịch sử điểm danh vẫn giữ. Có thể khôi phục tên bằng cách thêm lại hoặc nhập Excel cùng hồ sơ.
-- Tải mẫu Excel ngay trong Quản trị → Danh sách tập huấn. Xoá dòng minh hoạ; điền bốn cột `Trường`, `Họ và tên`, `Chức vụ`, `Số điện thoại`. Giữ điện thoại dạng văn bản. Chỉ nhập trang tính đầu tiên của file `.xlsx`, tối đa 200 người và 2 MB mỗi file. File `.xls` cần lưu thành `.xlsx`. Không dùng công thức ở bốn cột.
-- Nhập Excel → xem trước → xác nhận. Bắt buộc trường và họ tên. Chưa có chức vụ/số điện thoại có thể để trống. Có điện thoại phải có chức vụ, tạo tài khoản với quy tắc mật khẩu hiện tại nhưng không tự điểm danh.
-- Người đã có được bỏ qua nếu dữ liệu khớp; khác thông tin sẽ báo lỗi để sửa trực tiếp. Trùng tên cùng trường, trùng điện thoại hoặc dòng lỗi sẽ chặn toàn bộ lần nhập. Nếu dữ liệu thay đổi sau bước xem trước, phải xem trước lại.
-- Bộ đọc/ghi XLSX tích hợp, không phụ thuộc CDN; giải nén cần trình duyệt hiện đại hỗ trợ DecompressionStream (Chrome/Edge/Safari/Firefox mới).
-
-
-### Quản lý tên trường v17
-Trong Quản trị → Danh sách tập huấn → Quản lý tên trường / đơn vị: tìm trường, chọn từng trường hoặc tất cả kết quả đang hiển thị; nhấn Xoá trường đã chọn và nhập `XOA <số trường> TRUONG`. Trường và tên người thuộc trường sẽ được bỏ khỏi danh mục chọn điểm danh, giữ tài khoản đăng nhập, khảo sát và lịch sử. Thêm lại đúng tên trường hoặc nhập lại bằng Excel sẽ khôi phục danh sách đã lưu (trừ người đã được xoá riêng).
-
-Dùng **Tải mẫu tên trường** để tải `.xlsx` một cột `Trường`. Xoá dòng minh hoạ, mỗi dòng một trường, tối đa 200 trường / 2 MB; nhập trang tính đầu tiên. **Nhập Excel tên trường** có bước xem trước, đếm trường mới/khôi phục/trùng đã có, rồi xác nhận. Dòng trùng trong file hoặc tên trống sẽ chặn toàn bộ lần nhập. Không tạo tài khoản hay tự điểm danh. Dữ liệu thay đổi sau xem trước hoặc sau chọn xoá sẽ yêu cầu kiểm tra lại.
+### Danh sách tập huấn v18
+- Xoá người là xoá vĩnh viễn hồ sơ/tài khoản, phiếu khảo sát, lượt điểm danh, danh sách dự kiến liên quan, phản hồi và lượt bình chọn. Xoá trường xoá toàn bộ các dữ liệu liên quan của trường. Báo cáo khảo sát AI bị huỷ để không giữ nội dung từ người đã xoá. Xác nhận bằng `XOA <số người>` hoặc `XOA <số trường> TRUONG`. Có thể dùng lại số điện thoại để nhập và tạo tài khoản mới, không khôi phục dữ liệu cũ.
+- Khi nâng cấp, các mục đã được ẩn/xoá theo v16–17 được tự xoá vĩnh viễn ở lần truy cập đầu. Bản sao `previous.php` do ứng dụng quản lý cũng được ghi lại bằng dữ liệu sau xoá. Bản sao lưu bên ngoài ứng dụng/hosting không do mã nguồn này quản lý.
+- Excel `.xlsx` tối đa 200 dòng / 2 MB. Dùng các cột Trường, Họ và tên, Chức vụ, Số điện thoại; có thể thiếu cột hoặc để trống ô, đổi thứ tự cột. Mỗi dòng chỉ cần một thông tin; dòng trống bỏ qua. Dòng chỉ có tên trường tạo trường rỗng. Hồ sơ thiếu thông tin được lưu để quản trị bổ sung sau, không tạo tài khoản cho đến khi đủ cả bốn mục. Số điện thoại nếu nhập cần hợp lệ.
+- Có mẫu riêng cho danh sách người và tên trường. Xem trước số tài khoản mới, hồ sơ chờ bổ sung, trường mới và mục bỏ qua rồi xác nhận. Trùng dữ liệu/điện thoại hoặc xung đột dữ liệu sẽ báo lỗi trước khi lưu. Không tự ghi nhận điểm danh.

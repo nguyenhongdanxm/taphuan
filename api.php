@@ -44,14 +44,16 @@ function with_state($callback, $write) {
   survey_defaults($state);
   portal_defaults($state);
   attendance_defaults($state);
+  $erased=roster_defaults($state);$write=$write||$erased;
   $result=call_user_func_array($callback,array(&$state));
   if ($write) {
+   $erased=$erased||!empty($state['_roster_erased']);unset($state['_roster_erased']);
    $state['version']++;
    $encoded=json_encode($state,JSON_UNESCAPED_UNICODE); if ($encoded===false) { throw new Exception('Không mã hóa được dữ liệu.'); }
    $tmp=$dir.'/write-'.token().'.php';
    if (file_put_contents($tmp,$prefix.$encoded)===false) { throw new Exception('Không ghi được dữ liệu.'); }
    @chmod($tmp,0600);
-   if ($raw!==null && file_put_contents($dir.'/previous.php',$raw)===false) { @unlink($tmp); throw new Exception('Không lưu được bản dự phòng.'); }
+   if ($raw!==null && file_put_contents($dir.'/previous.php',$erased?$prefix.$encoded:$raw)===false) { @unlink($tmp); throw new Exception('Không lưu được bản dự phòng.'); }
    if (!rename($tmp,$path)) { @unlink($tmp); throw new Exception('Không hoàn tất được ghi dữ liệu.'); }
    @chmod($path,0600); @chmod($dir.'/previous.php',0600);
   }

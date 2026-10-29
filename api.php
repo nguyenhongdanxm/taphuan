@@ -68,7 +68,7 @@ try {
  if ($_SERVER['REQUEST_METHOD']==='POST') {
   if($action==='upload') { $input=$_POST; if(empty($input['csrf'])||!is_string($input['csrf'])||!hash_equals($_SESSION['csrf'],$input['csrf']))fail('Phiên tải tệp không hợp lệ hoặc tệp vượt giới hạn post_max_size của hosting.',403); } else {
   if (stripos(isset($_SERVER['CONTENT_TYPE'])?$_SERVER['CONTENT_TYPE']:'','application/json')!==0) { fail('Yêu cầu phải là JSON.',415); }
-  $raw=file_get_contents('php://input', false, null, 0, 131073); if (strlen($raw)>131072) { fail('Dữ liệu quá lớn.',413); }
+  $raw=file_get_contents('php://input', false, null, 0, 524289); if (strlen($raw)>524288) { fail('Dữ liệu quá lớn.',413); }
   $input=json_decode($raw,true); if (!is_array($input)) { fail('Dữ liệu không hợp lệ.',400); }
   if (!isset($input['csrf']) || !is_string($input['csrf']) || !hash_equals($_SESSION['csrf'],$input['csrf'])) { fail('Phiên đã thay đổi. Tải lại trang.',403); }
   }

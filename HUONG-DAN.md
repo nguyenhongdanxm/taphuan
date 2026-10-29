@@ -92,3 +92,12 @@ Xem [README.md](README.md) để cài đặt, deploy cPanel và chạy kiểm th
 4. **Xuất danh sách CSV:** xuất danh sách dự kiến và người đã có tài khoản, gồm cả trường chưa có người.
 
 Sửa hồ sơ giữ ID và các phiếu khảo sát. Đổi số điện thoại đổi tên đăng nhập nhưng giữ mật khẩu hiện tại. Chuyển trường sẽ đổi phạm vi thống kê trường mà tài khoản được xem. Danh sách dự kiến/lượt điểm danh các buổi cũ không bị viết lại; nếu cần sửa một bản ghi lịch sử, vào Kiểm diện → đúng buổi → Sửa lượt điểm danh.
+
+
+### Danh sách tập huấn v16
+- Chọn từng người hoặc chọn tất cả người đang hiển thị sau khi tìm/lọc. Có thể tiếp tục chọn ở trường khác; bộ đếm là tổng đã chọn. Nhấn Xoá người đã chọn, xem tên và nhập `XOA <số người>` để xác nhận.
+- Xoá chỉ bỏ tên khỏi danh sách chọn điểm danh. Tài khoản, quyền đăng nhập, số liệu khảo sát và lịch sử điểm danh vẫn giữ. Có thể khôi phục tên bằng cách thêm lại hoặc nhập Excel cùng hồ sơ.
+- Tải mẫu Excel ngay trong Quản trị → Danh sách tập huấn. Xoá dòng minh hoạ; điền bốn cột `Trường`, `Họ và tên`, `Chức vụ`, `Số điện thoại`. Giữ điện thoại dạng văn bản. Chỉ nhập trang tính đầu tiên của file `.xlsx`, tối đa 200 người và 2 MB mỗi file. File `.xls` cần lưu thành `.xlsx`. Không dùng công thức ở bốn cột.
+- Nhập Excel → xem trước → xác nhận. Bắt buộc trường và họ tên. Chưa có chức vụ/số điện thoại có thể để trống. Có điện thoại phải có chức vụ, tạo tài khoản với quy tắc mật khẩu hiện tại nhưng không tự điểm danh.
+- Người đã có được bỏ qua nếu dữ liệu khớp; khác thông tin sẽ báo lỗi để sửa trực tiếp. Trùng tên cùng trường, trùng điện thoại hoặc dòng lỗi sẽ chặn toàn bộ lần nhập. Nếu dữ liệu thay đổi sau bước xem trước, phải xem trước lại.
+- Bộ đọc/ghi XLSX tích hợp, không phụ thuộc CDN; giải nén cần trình duyệt hiện đại hỗ trợ DecompressionStream (Chrome/Edge/Safari/Firefox mới).

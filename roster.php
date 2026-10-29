@@ -4,6 +4,35 @@ function roster_rows($st){$rows=array();foreach(portal_directory($st) as $u)fore
 function roster_school_token($st,$school){$unit=null;foreach(portal_directory($st) as $u)if($u['school']===$school)$unit=$u;$people=array();foreach($st['participants'] as $id=>$p)if($p['school']===$school)$people[$id]=$p;return hash('sha256',json_encode(array($unit,$people)));}
 function roster_summary($st){$schools=array();foreach(portal_directory($st) as $u)$schools[]=array('name'=>$u['school'],'count'=>count($u['people']),'token'=>roster_school_token($st,$u['school']));return array('rows'=>roster_rows($st),'schools'=>$schools);}
 function roster_actions($action,$input){need_admin();global $config;return with_state(function(&$st)use($action,$input,$config){
+ if($action==='portal_roster_delete_many'){
+  $items=isset($input['items'])?$input['items']:null;if(!is_array($items)||!count($items)||count($items)>1000)fail('Chọn từ 1 đến 1000 người.',400);
+  if(!isset($input['confirm'])||$input['confirm']!=='XOA '.count($items))fail('Nhập đúng nội dung xác nhận xoá.',400);
+  $rows=array_column(roster_rows($st),null,'key');$keys=array();foreach($items as $item){if(!is_array($item)||!isset($item['key'],$item['token'])||!is_string($item['key'])||!is_string($item['token'])||!isset($rows[$item['key']])||!hash_equals($rows[$item['key']]['token'],$item['token']))fail('Danh sách vừa thay đổi. Tải lại rồi chọn lại.',409);$keys[$item['key']]=true;}
+  foreach($keys as $key=>$yes)$st['portal']['roster_removed'][$key]=true;
+  foreach($st['portal']['directory'] as &$unit)$unit['people']=array_values(array_filter($unit['people'],function($p)use($unit,$keys){return !isset($keys[attendance_identity($unit['school'],$p['name'])]);}));unset($unit);
+  audit($st,'Xoá khỏi danh sách tập huấn: '.count($keys).' người; giữ tài khoản và lịch sử.');return array('ok'=>true,'deleted'=>count($keys));
+ }
+ if($action==='portal_roster_import'){
+  $items=isset($input['rows'])?$input['rows']:null;if(!is_array($items)||!count($items)||count($items)>200)fail('Mỗi lần nhập từ 1 đến 200 dòng.',400);
+  $snapshot=hash('sha256',json_encode(array($st['portal']['directory'],$st['participants'],isset($st['portal']['roster_removed'])?$st['portal']['roster_removed']:array())));
+  $known=array_column(roster_rows($st),null,'key');$seen=array();$phones=array();foreach($st['participants'] as $p)if(!empty($p['phone']))$phones[$p['phone']]=true;
+  $pending=array();$skipped=0;foreach($items as $i=>$item){if(!is_array($item))fail('Dòng nhập không hợp lệ.',400);$school=portal_field($item,'school',180);$name=portal_field($item,'name',100);$role=portal_field($item,'role',100);$raw=portal_field($item,'phone',30);$phone=$raw!==''?phone_number($raw):'';$line=$i+2;
+   if($school===''||$name==='')fail('Dòng '.$line.': thiếu trường hoặc họ tên.',400);if($phone!==''&&$role==='')fail('Dòng '.$line.': có số điện thoại cần có chức vụ.',400);
+   $key=attendance_identity($school,$name);if(isset($seen[$key]))fail('Dòng '.$line.': trùng trường và họ tên trong file.',409);$seen[$key]=true;
+   if(isset($known[$key])){if(($role!==''&&$known[$key]['role']!==$role)||($phone!==''&&$known[$key]['phone']!==$phone))fail('Dòng '.$line.': người đã có thông tin khác. Sửa trực tiếp trong danh sách.',409);$skipped++;continue;}
+   // Người đã xoá nhưng có tài khoản: khôi phục danh sách, không tạo tài khoản thứ hai.
+   $linked=null;foreach($st['participants'] as $id=>$p)if($p['school']===$school&&$p['name']===$name&&!empty($p['phone'])){if($linked!==null)fail('Dòng '.$line.': trùng nhiều tài khoản.',409);$linked=$p;}
+   if($linked){if(($phone!==''&&$phone!==$linked['phone'])||($role!==''&&$role!==$linked['role']))fail('Dòng '.$line.': khác hồ sơ tài khoản đã có.',409);$phone='';$role=$linked['role'];}
+   if($phone!==''&&isset($phones[$phone]))fail('Dòng '.$line.': số điện thoại đã được sử dụng.',409);if($phone!=='')$phones[$phone]=true;
+   $pending[]=array('school'=>$school,'name'=>$name,'role'=>$role,'phone'=>$phone);
+  }
+  if(count($known)+count($pending)>1000)fail('Danh sách vượt 1000 người.',409);$accounts=count(array_filter($st['participants'],function($p){return !empty($p['phone']);}));$newAccounts=count(array_filter($pending,function($p){return $p['phone']!=='';}));if($accounts+$newAccounts>$config['max_participants'])fail('Vượt giới hạn tài khoản cấu hình.',409);
+  $schools=array();foreach(portal_directory($st) as $u)$schools[$u['school']]=true;foreach($pending as $p)$schools[$p['school']]=true;if(count($schools)>500)fail('Vượt giới hạn 500 trường.',409);
+  if(empty($input['commit']))return array('ok'=>true,'token'=>$snapshot,'added'=>count($pending),'skipped'=>$skipped,'accounts'=>$newAccounts);
+  if(!isset($input['token'])||!is_string($input['token'])||!hash_equals($snapshot,$input['token']))fail('Danh sách vừa thay đổi. Xem trước lại file.',409);
+  foreach($pending as $p){portal_remember($st,$p['school'],$p['name'],$p['role']);if($p['phone']!==''){$id=token();$st['participants'][$id]=array_merge($p,array('joined'=>gmdate('c'),'password_hash'=>password_hash(initial_student_password($p['name'],$p['phone']),PASSWORD_DEFAULT)));}}
+  audit($st,'Nhập danh sách Excel: '.count($pending).' người.');return array('ok'=>true,'added'=>count($pending),'skipped'=>$skipped);
+ }
  if($action==='portal_roster_save'){
   $key=portal_field($input,'key',64);$old=null;foreach(roster_rows($st) as $r)if($r['key']===$key)$old=$r;
   if($key!==''&&(!$old||!isset($input['token'])||!is_string($input['token'])||!hash_equals($old['token'],$input['token'])))fail('Danh sách vừa thay đổi. Đóng biểu mẫu, tải lại rồi sửa.',409);
@@ -22,7 +51,7 @@ function roster_actions($action,$input){need_admin();global $config;return with_
  }
  if($action==='portal_roster_school_save'){
   $old=portal_field($input,'old_school',180);$name=portal_field($input,'school',180);if($name==='')fail('Nhập tên trường.',400);$exists=false;foreach(portal_directory($st) as $u){if($u['school']===$old)$exists=true;if($u['school']===$name&&$name!==$old)fail('Tên trường đã có. Sửa từng người nếu cần chuyển trường; không gộp tự động.',409);}
-  if($old!==''){if(!$exists||!isset($input['token'])||!is_string($input['token'])||!hash_equals(roster_school_token($st,$old),$input['token']))fail('Danh sách trường vừa thay đổi. Tải lại trước khi đổi tên.',409);foreach($st['portal']['directory'] as &$u)if($u['school']===$old)$u['school']=$name;unset($u);foreach($st['participants'] as &$p)if($p['school']===$old)$p['school']=$name;unset($p);
+  if($old!==''){if(!$exists||!isset($input['token'])||!is_string($input['token'])||!hash_equals(roster_school_token($st,$old),$input['token']))fail('Danh sách trường vừa thay đổi. Tải lại trước khi đổi tên.',409);foreach($st['portal']['directory'] as &$u)if($u['school']===$old)$u['school']=$name;unset($u);foreach($st['participants'] as &$p)if($p['school']===$old){$removed=attendance_identity($old,$p['name']);if(!empty($st['portal']['roster_removed'][$removed])){unset($st['portal']['roster_removed'][$removed]);$st['portal']['roster_removed'][attendance_identity($name,$p['name'])]=true;}$p['school']=$name;}unset($p);
    // Trường chỉ được suy ra từ tài khoản vẫn cần có đơn vị trong danh sách lưu.
    $found=false;foreach($st['portal']['directory'] as $u)if($u['school']===$name)$found=true;if(!$found)$st['portal']['directory'][]=array('school'=>$name,'people'=>array());
   }else{if(count(portal_directory($st))>=500)fail('Đã đạt giới hạn 500 trường.',409);$st['portal']['directory'][]=array('school'=>$name,'people'=>array());}

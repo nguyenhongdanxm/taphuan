@@ -98,3 +98,12 @@ Quản trị → **Danh sách tập huấn** (hoặc Kiểm diện → Quản l�
 Nếu nhập số điện thoại và chức vụ cho người chưa có tài khoản, hệ thống tạo tài khoản và hiển thị mật khẩu ban đầu cho quản trị; việc này không ghi nhận có mặt. Sửa người đã có tài khoản giữ nguyên ID, mật khẩu và liên kết phiếu khảo sát. Đổi số điện thoại đổi tên đăng nhập, không đổi mật khẩu. Đổi trường đổi phạm vi thống kê mà tài khoản được xem. Lịch sử điểm danh/snapshot danh sách dự kiến của các buổi đã tạo giữ nguyên; buổi tạo mới dùng danh sách đã chỉnh. Không tự gộp các trường/người trùng, không nhận số điện thoại thuộc tài khoản khác, từ chối bản sửa đã cũ khi có cập nhật đồng thời.
 
 Danh sách biên tập lưu cùng dữ liệu hosting, không sửa file seed mỗi lần và không bị deploy ghi đè. Chỉ quản trị nhận dữ liệu số điện thoại/tài khoản trong mục này; danh sách chọn trường công khai vẫn chỉ có tên trường, họ tên, chức vụ. `roster.php` được bảo vệ và thêm vào deploy; giao diện dùng v15.
+
+
+### Danh sách tập huấn v16
+- Chọn từng người hoặc chọn tất cả người đang hiển thị sau khi tìm/lọc. Có thể tiếp tục chọn ở trường khác; bộ đếm là tổng đã chọn. Nhấn Xoá người đã chọn, xem tên và nhập `XOA <số người>` để xác nhận.
+- Xoá chỉ bỏ tên khỏi danh sách chọn điểm danh. Tài khoản, quyền đăng nhập, số liệu khảo sát và lịch sử điểm danh vẫn giữ. Có thể khôi phục tên bằng cách thêm lại hoặc nhập Excel cùng hồ sơ.
+- Tải mẫu Excel ngay trong Quản trị → Danh sách tập huấn. Xoá dòng minh hoạ; điền bốn cột `Trường`, `Họ và tên`, `Chức vụ`, `Số điện thoại`. Giữ điện thoại dạng văn bản. Chỉ nhập trang tính đầu tiên của file `.xlsx`, tối đa 200 người và 2 MB mỗi file. File `.xls` cần lưu thành `.xlsx`. Không dùng công thức ở bốn cột.
+- Nhập Excel → xem trước → xác nhận. Bắt buộc trường và họ tên. Chưa có chức vụ/số điện thoại có thể để trống. Có điện thoại phải có chức vụ, tạo tài khoản với quy tắc mật khẩu hiện tại nhưng không tự điểm danh.
+- Người đã có được bỏ qua nếu dữ liệu khớp; khác thông tin sẽ báo lỗi để sửa trực tiếp. Trùng tên cùng trường, trùng điện thoại hoặc dòng lỗi sẽ chặn toàn bộ lần nhập. Nếu dữ liệu thay đổi sau bước xem trước, phải xem trước lại.
+- Bộ đọc/ghi XLSX tích hợp, không phụ thuộc CDN; giải nén cần trình duyệt hiện đại hỗ trợ DecompressionStream (Chrome/Edge/Safari/Firefox mới).

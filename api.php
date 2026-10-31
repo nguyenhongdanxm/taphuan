@@ -15,6 +15,7 @@ require_once __DIR__ . '/survey.php';
 require_once __DIR__ . '/portal.php';
 require_once __DIR__ . '/attendance.php';
 require_once __DIR__ . '/roster.php';
+require_once __DIR__ . '/attachments.php';
 $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 ini_set('session.use_strict_mode', '1');
 session_name('AIWORKSHOP');
@@ -48,6 +49,7 @@ function with_state($callback, $write) {
   $result=call_user_func_array($callback,array(&$state));
   if ($write) {
    $erased=$erased||!empty($state['_roster_erased']);unset($state['_roster_erased']);
+   $fileDeletes=isset($state['_tool_file_delete'])?$state['_tool_file_delete']:array();unset($state['_tool_file_delete']);
    $state['version']++;
    $encoded=json_encode($state,JSON_UNESCAPED_UNICODE); if ($encoded===false) { throw new Exception('Không mã hóa được dữ liệu.'); }
    $tmp=$dir.'/write-'.token().'.php';
@@ -56,6 +58,7 @@ function with_state($callback, $write) {
    if ($raw!==null && file_put_contents($dir.'/previous.php',$erased?$prefix.$encoded:$raw)===false) { @unlink($tmp); throw new Exception('Không lưu được bản dự phòng.'); }
    if (!rename($tmp,$path)) { @unlink($tmp); throw new Exception('Không hoàn tất được ghi dữ liệu.'); }
    @chmod($path,0600); @chmod($dir.'/previous.php',0600);
+   foreach($fileDeletes as $fileId){$filePath=tool_file_path($fileId);if($filePath&&is_file($filePath))@unlink($filePath);}
   }
   flock($lock,LOCK_UN); fclose($lock); return $result;
  } catch (Exception $e) { flock($lock,LOCK_UN); fclose($lock); throw $e; }
@@ -68,14 +71,15 @@ try {
  $action=isset($_GET['action'])?$_GET['action']:'state';
  $input=array();
  if ($_SERVER['REQUEST_METHOD']==='POST') {
-  if($action==='upload') { $input=$_POST; if(empty($input['csrf'])||!is_string($input['csrf'])||!hash_equals($_SESSION['csrf'],$input['csrf']))fail('Phiên tải tệp không hợp lệ hoặc tệp vượt giới hạn post_max_size của hosting.',403); } else {
+  if($action==='upload'||$action==='portal_file_upload') { $input=$_POST; if(empty($input['csrf'])||!is_string($input['csrf'])||!hash_equals($_SESSION['csrf'],$input['csrf']))fail('Phiên tải tệp không hợp lệ hoặc tệp vượt giới hạn post_max_size của hosting.',403); } else {
   if (stripos(isset($_SERVER['CONTENT_TYPE'])?$_SERVER['CONTENT_TYPE']:'','application/json')!==0) { fail('Yêu cầu phải là JSON.',415); }
   $raw=file_get_contents('php://input', false, null, 0, 524289); if (strlen($raw)>524288) { fail('Dữ liệu quá lớn.',413); }
   $input=json_decode($raw,true); if (!is_array($input)) { fail('Dữ liệu không hợp lệ.',400); }
   if (!isset($input['csrf']) || !is_string($input['csrf']) || !hash_equals($_SESSION['csrf'],$input['csrf'])) { fail('Phiên đã thay đổi. Tải lại trang.',403); }
   }
- } elseif ($action!=='state' && $action!=='portal_state' && $action!=='admin_data') { fail('Thao tác này cần POST.',405); }
+ } elseif ($action!=='state' && $action!=='portal_state' && $action!=='admin_data' && $action!=='file') { fail('Thao tác này cần POST.',405); }
  $is_admin=admin();
+ if($action==='file')tool_file_serve();
  if(strpos($action,'portal_')===0){$result=portal_actions($action,$input,$is_admin);
  } elseif(in_array($action,array('survey_submit','survey_control','survey_analyze','survey_reset'),true)){$result=survey_actions($action,$input);
  } elseif(in_array($action,array('ai_settings','ai_save','ai_generate','ai_models'),true)) { $result=ai_actions($action,$input);

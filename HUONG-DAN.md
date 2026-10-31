@@ -105,3 +105,15 @@ Sửa hồ sơ giữ ID và các phiếu khảo sát. Đổi số điện thoạ
 Bổ sung câu 16: “Thầy cô đang dùng tài khoản AI nào sau đây?” gồm 18 gói theo ChatGPT, Google Gemini, Claude, Microsoft Copilot, Perplexity AI, Grok và lựa chọn riêng “Chưa dùng chat AI nào”. Cho chọn nhiều gói, không áp dụng giới hạn 3 của các câu cũ; lựa chọn chưa dùng loại trừ các gói còn lại.
 
 Phiếu cũ 15 câu giữ nguyên, không tự điền câu 16. Học viên có thể bổ sung khi quản trị mở nhận. Thống kê, biểu đồ và CSV câu mới chỉ tính trên người đã trả lời câu đó; không diễn giải phiếu thiếu thành “chưa dùng”. AI nhận câu hỏi và số liệu mới; báo cáo đã tạo trước đó được đánh dấu cũ nếu khác dữ liệu hiện tại. Tên gói giữ theo danh mục yêu cầu của đợt tập huấn.
+
+
+### Tệp đính kèm công cụ v20
+Quản trị → Công cụ → Thêm/Sửa công cụ: chọn nhiều file ở mục **Tệp đính kèm**. Có thanh tiến độ; tải xong cần bấm **Lưu thay đổi** để công bố. Mỗi công cụ tối đa 10 tệp, mỗi tệp 20 MB; toàn kho tối đa 500 tệp / 500 MB. Hosting có thể đặt giới hạn thấp hơn (`upload_max_filesize`, `post_max_size`); cần bật PHP `fileinfo`.
+
+Nhận PDF, DOCX, XLSX, PPTX, TXT, CSV, JPG/JPEG, PNG, WEBP, GIF và ZIP. PDF/ảnh/văn bản xem trực tiếp; CSV xem nội dung văn bản. Word/Excel/PowerPoint dùng Microsoft Office Web Viewer, cần file đã công bố truy cập được qua Internet và dịch vụ Microsoft hoạt động; nếu không xem được, dùng Tải xuống hoặc đăng thêm bản PDF. ZIP chỉ tải xuống. File Office cũ `.doc/.xls/.ppt` cần lưu thành định dạng mới; không nhận gói OOXML có macro/mật khẩu.
+
+Người xem không cần tài khoản để xem/tải các tài liệu đã công bố trong Công cụ. Tệp bản nháp chỉ quản trị truy cập; bản nháp không được gắn vào công cụ sau 24 giờ được dọn khi tải hoặc lưu tiếp theo. Gỡ tệp và lưu, hoặc xoá công cụ, sẽ xoá tệp khi không còn công cụ khác sử dụng. Chỉ quản trị được tải/gỡ file.
+
+Tệp lưu trong `data_dir/files` được chặn truy cập trực tiếp, không lưu vào mã nguồn; xem/tải thông qua API với mã tệp. Triển khai cPanel có thêm `attachments.php`; thư mục dữ liệu hiện có được giữ nguyên.
+
+Kiểm thử upload thực: `PHP_BIN=/path/to/php PHP_FILEINFO_EXTENSION=/path/to/fileinfo.so node tests/integration.cjs`. Nếu PHP không cần chỉ định extension thì điều chỉnh lệnh khởi chạy tương ứng; bộ kiểm thử file dùng biến này để bật nhánh kiểm tra upload.

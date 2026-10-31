@@ -36,7 +36,8 @@ function portal_sort($items){$out=array_values($items);usort($out,function($a,$b
 function portal_state($st,$is_admin){
  $p=$st['portal'];$pid=isset($_SESSION['participant'])?$_SESSION['participant']:'';$topics=array();foreach(portal_sort($p['topics']) as $t)if($is_admin||$t['published'])$topics[]=$t;
  $people=array();$count=0;foreach($st['participants'] as $id=>$person){if(empty($person['phone']))continue;$count++;if($is_admin){$person=clean_person($person);$person['id']=$id;$person['answered']=isset($st['survey']['responses'][$id]);$people[]=$person;}}
- return array('event'=>$p['event'],'event_revision'=>$p['revision'],'topics'=>$topics,'tools'=>array_values($p['tools']),'directory'=>portal_directory($st),'people'=>$people,'roster'=>$is_admin?roster_summary($st):null,'checked_in_count'=>$count,'survey'=>survey_summary($st,$is_admin),'ai'=>$is_admin?ai_meta():null,'me'=>isset($st['participants'][$pid])?clean_person($st['participants'][$pid]):null,'admin'=>$is_admin,'initialized'=>!empty($st['password_hash']),'csrf'=>$_SESSION['csrf'],'attendance'=>attendance_summary($st,$is_admin),'version'=>$st['version']);
+ $tools=array();foreach($p['tools'] as $t){$t['files']=tool_files_for_tool($st,$t);$tools[]=$t;}
+ return array('event'=>$p['event'],'event_revision'=>$p['revision'],'topics'=>$topics,'tools'=>$tools,'directory'=>portal_directory($st),'people'=>$people,'roster'=>$is_admin?roster_summary($st):null,'checked_in_count'=>$count,'survey'=>survey_summary($st,$is_admin),'ai'=>$is_admin?ai_meta():null,'me'=>isset($st['participants'][$pid])?clean_person($st['participants'][$pid]):null,'admin'=>$is_admin,'initialized'=>!empty($st['password_hash']),'csrf'=>$_SESSION['csrf'],'attendance'=>attendance_summary($st,$is_admin),'version'=>$st['version']);
 }
 function portal_field($input,$name,$max){return cut(isset($input[$name])?$input[$name]:'',$max);}
 function portal_revision($input,$current){if(!isset($input['revision'])||(int)$input['revision']!==(int)$current)fail('Nội dung đã thay đổi ở phiên khác. Đóng biểu mẫu, tải lại và sửa bản mới.',409);}
@@ -45,6 +46,7 @@ function portal_actions($action,$input,$is_admin){
  if($action==='portal_state')return with_state(function(&$st)use($is_admin){return portal_state($st,$is_admin);},false);
  if(strpos($action,'portal_roster_')===0)return roster_actions($action,$input);
  if($action==='portal_survey_dashboard'){need_admin();return with_state(function(&$st)use($input){return survey_dashboard($st,$input);},false);}
+ if($action==='portal_file_upload')return tool_file_upload();
  if($action==='portal_scan'||strpos($action,'portal_attendance_')===0)return attendance_actions($action,$input);
  if($action==='portal_checkin'){
   $school=portal_field($input,'school',180);$name=portal_field($input,'name',100);$role=portal_field($input,'role',100);$phone=phone_number(isset($input['phone'])?$input['phone']:'');
@@ -76,9 +78,11 @@ function portal_actions($action,$input,$is_admin){
   }elseif($action==='portal_tool_save'){
    $id=portal_field($input,'id',100);$old=null;if($id!==''){if(!isset($p['tools'][$id]))fail('Công cụ đã bị xóa.',409);$old=$p['tools'][$id];portal_revision($input,$old['revision']);}elseif(count($p['tools'])>=200)fail('Đã đạt giới hạn 200 công cụ.',409);
    $name=portal_field($input,'name',200);$url=portal_field($input,'url',1000);if($name==='')fail('Nhập tên công cụ / câu lệnh.',400);if($url!==''&&(!filter_var($url,FILTER_VALIDATE_URL)||!in_array(strtolower(parse_url($url,PHP_URL_SCHEME)),array('https','http'),true)))fail('Liên kết phải bắt đầu bằng https:// hoặc http://.',400);if(!$old)$id='tool-'.substr(token(),0,16);
-   $p['tools'][$id]=array('id'=>$id,'name'=>$name,'group'=>portal_field($input,'group',200),'url'=>$url,'description'=>portal_field($input,'description',3000),'prompt'=>portal_field($input,'prompt',6000),'revision'=>$old?$old['revision']+1:1);
+   $fileIds=tool_files_validate($st,$input,$old);
+   $removed=$old&&isset($old['files'])?array_values(array_diff($old['files'],$fileIds)):array();
+   $p['tools'][$id]=array('files'=>$fileIds,'id'=>$id,'name'=>$name,'group'=>portal_field($input,'group',200),'url'=>$url,'description'=>portal_field($input,'description',3000),'prompt'=>portal_field($input,'prompt',6000),'revision'=>$old?$old['revision']+1:1);tool_files_cleanup($st,$removed);
   }elseif($action==='portal_tool_delete'){
-   $id=portal_field($input,'id',100);if(!isset($p['tools'][$id]))fail('Không có công cụ này.',404);portal_revision($input,$p['tools'][$id]['revision']);unset($p['tools'][$id]);
+   $id=portal_field($input,'id',100);if(!isset($p['tools'][$id]))fail('Không có công cụ này.',404);portal_revision($input,$p['tools'][$id]['revision']);$removed=isset($p['tools'][$id]['files'])?$p['tools'][$id]['files']:array();unset($p['tools'][$id]);tool_files_cleanup($st,$removed);
   }else fail('Thao tác không hợp lệ.',404);
   audit($st,'Cổng tập huấn: '.$action);return array('ok'=>true);
  },true);

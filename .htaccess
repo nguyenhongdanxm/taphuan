@@ -3,7 +3,7 @@ DirectoryIndex index.html
   RewriteEngine Off
 </IfModule>
 Options -Indexes
-<FilesMatch "^(config|course|studio|ai|survey|portal|attendance|roster|roster-seed)\.php$|\.(zip|md)$">
+<FilesMatch "^(config|course|studio|ai|survey|portal|attendance|attachments|roster|roster-seed)\.php$|\.(zip|md)$">
   <IfModule mod_authz_core.c>
     Require all denied
   </IfModule>
